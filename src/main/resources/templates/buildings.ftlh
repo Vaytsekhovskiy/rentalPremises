@@ -4,6 +4,12 @@
     <title>RENTAL PREMISES</title>
 </head>
 <body>
+<form action="" method="post">
+    <input type="submit" value="Регистрация"/>
+</form>
+<form action="" method="post">
+    <input type="submit" value="Вход"/>
+</form>
 <#list buildings as building> <!--реализованно при помощи freeMarker, buildings передаётся через buildings(Model model)-->
     <!--цикл for, проходимся по каждому зданию-->
     <div>
@@ -32,5 +38,20 @@
     Описание: <input type="text" name="description"/><br><br>
     <input type="submit" value="Добавить помещение"/>
 </form>
+
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script> <!-- Подключение JavaScript-файла Leaflet -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
+<div id="map" style="height: 400px;"></div> <!-- Контейнер карты -->
+
+<script>
+    // создание карты
+    var map = L.map('map').setView([59.95, 30.40], 10); // Устанавливаем координаты центра карты и уровень масштабирования
+    // добавление слоя тайлов
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Добавьте маркеры, линии и другие элементы на карту по необходимости
+</script>
 </body>
 </html>
