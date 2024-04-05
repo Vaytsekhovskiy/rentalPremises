@@ -36,4 +36,9 @@ public class BuildingServiceDao implements BuildingService{ // реализац�
         }
         return null;
     }
+
+    @Override
+    public List<Building> listBuildings(String name) {
+        return null;
+    }
 }

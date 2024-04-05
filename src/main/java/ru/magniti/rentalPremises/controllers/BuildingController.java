@@ -6,17 +6,19 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.magniti.rentalPremises.models.Building;
+import ru.magniti.rentalPremises.services.BuildingServiceDB;
 import ru.magniti.rentalPremises.services.BuildingServiceDao;
 
 @Controller
 @RequiredArgsConstructor // создаёт экземпляр для buildingService в конструкторе
 public class BuildingController {
-    private final BuildingServiceDao buildingService; // final, т.к. @RequiredArgsConstructor
+    private final BuildingServiceDB buildingService; // final, т.к. @RequiredArgsConstructor
     // должен понять, что экземпляр создаётся ток в конструкторе
     @GetMapping("/") // GET запрос, обрабатывает пустой адрес
-    public String buildings(Model model) { // model передаёт builings в buildings.ftlh
-        model.addAttribute("buildings", buildingService.getBuildings());
+    public String buildings(@RequestParam(name = "name", required = false) String name, Model model) { // model передаёт builings в buildings.ftlh
+        model.addAttribute("buildings", buildingService.listBuildings(name));
         return "buildings"; // возвращает buildings.ftlh
     }
     @GetMapping("/building/{id}") // GET запрос, обрабатывает отдельное помещение

@@ -10,6 +10,10 @@
 <form action="" method="post">
     <input type="submit" value="Вход"/>
 </form>
+<form action="/" method="get">
+    Поиск по названию здания: <input type="text" name="name"/>
+    <input type="submit" value="Поиск"/>
+</form>
 <#list buildings as building> <!--реализованно при помощи freeMarker, buildings передаётся через buildings(Model model)-->
     <!--цикл for, проходимся по каждому зданию-->
     <div>
@@ -26,6 +30,8 @@
         <br>
         <a href="/building/${building.id}">Подробнее...</a>
     </div>
+    <#else >
+        <h3>Ничего не найдено</h3>
 </#list>
 <h3>Внести новое помещение</h3>
 <!--Передаёт JSON методом POST, спринг получает и автоматически конверирует в Building-->
