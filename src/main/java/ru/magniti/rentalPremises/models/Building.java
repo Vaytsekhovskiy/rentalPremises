@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity // показывает, что класс является референсом к бд
-@Table(name = "building") // задаём имя таблицы
+@Table(name = "buildings") // задаём имя таблицы
 @Data // геттеры, сеттеры, equals, hashCode, canEqual, toString
 @AllArgsConstructor
 @NoArgsConstructor

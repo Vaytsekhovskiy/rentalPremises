@@ -4,10 +4,10 @@
     <title>RENTAL PREMISES</title>
 </head>
 <body>
-<form action="" method="post">
-    <input type="submit" value="Регистрация"/>
-</form>
-<form action="" method="post">
+<#if errorrMessage??>
+    <h2 style="color: red">${errorMessage}</h2>
+</#if>
+<form action="/login" method="get">
     <input type="submit" value="Вход"/>
 </form>
 <form action="/" method="get">
