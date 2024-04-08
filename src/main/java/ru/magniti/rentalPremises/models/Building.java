@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Building {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
     @Column(name = "name")
@@ -22,8 +22,11 @@ public class Building {
     // street..
     @Column(name = "price")
     private int price;
-    @Column(name = "owner")
-    private String owner;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "owner_id")
+    private User owner;
+
     @Column(name = "description", columnDefinition = "text")
     private String description;
 }

@@ -16,7 +16,7 @@ import java.util.Set;
 public class User implements UserDetails { // имплементируя UserDetails мы показываем Spring Security, что
     // с помощью модели User мы будем авторизироваться (брать мэйл, пароль и т. д.)
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
     @Column(name = "username")
@@ -51,7 +51,9 @@ public class User implements UserDetails { // имплементируя UserDet
     public String getUsername() {
         return email;
     }
-
+//    public void setPhoneNumber(String phoneNumber) {
+//        this.phone_number = phoneNumber;
+//    }
     @Override
     public boolean isAccountNonExpired() {
         return true;
