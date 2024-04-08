@@ -4,14 +4,11 @@
     <title>RENTAL PREMISES</title>
 </head>
 <body>
-<#if errorrMessage??>
+<#if errorMessage??>
     <h2 style="color: red">${errorMessage}</h2>
 </#if>
 <form action="/login" method="get">
     <input type="submit" value="Вход"/>
-</form>
-<form action="/logout" method="post">
-    <input type="submit" value="Выйти из аккаунта"/>
 </form>
 <form action="/" method="get">
     Поиск по названию здания: <input type="text" name="name"/>
@@ -33,21 +30,22 @@
         <br>
         <a href="/building/${building.id}">Подробнее...</a>
     </div>
-<#else >
-    <h3>Ничего не найдено</h3>
+    <#else >
+        <h3>Ничего не найдено</h3>
 </#list>
 <h3>Внести новое помещение</h3>
 <!--Передаёт JSON методом POST, спринг получает и автоматически конверирует в Building-->
 <!--Передаёт Building в buildingCreate(Building building)-->
 <form action="/building/create" method="post" enctype="multipart/form-data">
+    <!--помимо текста можно передавать другие файлы-->
     Название: <input type="text" name="name"/><br><br>
     Расположение: <input type="text" name="location"/><br><br>
     Цена: <input type="number" name="price"/><br><br>
     Владелец: <input type="text" name="owner"/><br><br>
     Описание: <input type="text" name="description"/><br><br>
-    Фасад: <input type="file" name="frontFile"/><br><br>
-    Вход: <input type="file" name="entranceFile"/><br><br>
-    Интерьер: <input type="file" name="interiorFile"/><br><br>
+    Фасад здания: <input type="file" name="frontFile"/><br><br>
+    Вход в помещение: <input type="file" name="entranceFile"/><br><br>
+    Помещение <input type="file" name="interiorFile"/><br><br>
     <input type="submit" value="Добавить помещение"/>
 </form>
 
