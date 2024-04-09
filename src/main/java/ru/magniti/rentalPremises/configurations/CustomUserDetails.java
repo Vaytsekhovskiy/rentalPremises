@@ -3,6 +3,7 @@ package ru.magniti.rentalPremises.configurations;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.magniti.rentalPremises.models.User;
+import ru.magniti.rentalPremises.models.enums.Role;
 import ru.magniti.rentalPremises.services.CustomUserDetailsService;
 
 import java.util.Collection;
