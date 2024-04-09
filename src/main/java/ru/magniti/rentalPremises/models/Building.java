@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Building {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
     @Column(name = "name")
@@ -26,11 +26,6 @@ public class Building {
     // street..
     @Column(name = "price")
     private int price;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "owner_id")
-    private User owner;
-
     @Column(name = "description", columnDefinition = "text")
     private String description;
     // создаём отношение один ко многим (Building тоже должен знать про это отношение)
@@ -39,6 +34,9 @@ public class Building {
     private List<Image> images = new ArrayList<>();
     private Long previewImageId;
     private LocalDateTime dateOfCreated;
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @JoinColumn
+    User user;
 
     @PrePersist // метод инициализации бина в спринге
     private void init() {

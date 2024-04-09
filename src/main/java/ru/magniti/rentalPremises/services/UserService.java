@@ -17,7 +17,7 @@ public class UserService {
 
     public boolean createUser(User user) {
         String userEmail = user.getUsername();
-        if (!userRepository.findUserByUsername(userEmail).isEmpty()) return false;
+        if (userRepository.findUserByUsername(userEmail).isPresent()) return false;
         user.setActive(true);
         user.getRoles().add(Role.ROLE_USER);
         //user.setPassword(user.getPassword());
