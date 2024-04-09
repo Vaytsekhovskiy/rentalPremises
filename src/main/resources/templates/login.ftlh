@@ -51,7 +51,7 @@
 <h4>Авторизация</h4>
 
 <form action="/login" method="post">
-    Эл. почта: <input type="text" name="username"><br><br>
+    Эл. почта: <input type="email" name="username"><br><br>
     Пароль: <input type="password" name="password"><br><br>
     <input type="submit" value="Вход"/>
 </form>
