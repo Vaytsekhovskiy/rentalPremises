@@ -13,6 +13,7 @@ import ru.magniti.rentalPremises.models.Building;
 import ru.magniti.rentalPremises.services.BuildingService;
 
 import java.io.IOException;
+import java.security.Principal;
 
 @Slf4j
 @Controller
@@ -21,8 +22,14 @@ public class BuildingController {
     private final BuildingService buildingService; // final, т.к. @RequiredArgsConstructor
     // должен понять, что экземпляр создаётся ток в конструкторе
     @GetMapping("/") // GET запрос, обрабатывает пустой адрес
-    public String buildings(@RequestParam(name = "name", required = false) String name, Model model) { // model передаёт builings в buildings.ftlh
+    public String buildings(
+            @RequestParam(name = "name", required = false) String name,
+                            Model model,
+                            Principal principal
+            )
+    { // model передаёт builings в buildings.ftlh
         model.addAttribute("buildings", buildingService.listBuildings(name));
+        model.addAttribute("user", buildingService.getUserByPrincipal(principal));
         return "buildings"; // возвращает buildings.ftlh
     }
     @GetMapping("/building/{id}") // GET запрос, обрабатывает отдельное помещение
@@ -36,11 +43,12 @@ public class BuildingController {
             @RequestParam("frontFile") MultipartFile frontFile,
             @RequestParam("entranceFile") MultipartFile entranceFile,
             @RequestParam("interiorFile") MultipartFile interiorFile,
-            Building building
+            Building building,
+            Principal principal
     ) throws IOException
     {
         log.info("BuildingController.buildingCreate");
-        buildingService.saveBuilding(building, frontFile, entranceFile, interiorFile);
+        buildingService.saveBuilding(principal, building, frontFile, entranceFile, interiorFile);
         log.info("BuildingController.buildingCreate is done");
         return "redirect:/"; // возвращает buildings.ftlh
     }

@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.autoconfigure.info.ProjectInfoProperties;
 
-
 @Entity // показывает, что класс является референсом к бд
 @Table(name = "images") // задаём имя таблицы
 @Data // геттеры, сеттеры, equals, hashCode, canEqual, toString
