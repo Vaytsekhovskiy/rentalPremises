@@ -8,6 +8,9 @@
     Подробная информация о товаре
 </h3>
     <div>
+        <#list images as img>
+            <img src="/images/${img.id}" height="80px"><br><br>
+        </#list>
         Название: ${building.name}
         <br>
         Расположение: ${building.location}
