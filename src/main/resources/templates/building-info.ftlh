@@ -17,7 +17,7 @@
         <br>
         Цена: ${building.price}
         <br>
-        Владелец: ${building.owner}
+        Владелец: ${building.user.username}
         <br>
         Описание: ${building.description}
     </div>

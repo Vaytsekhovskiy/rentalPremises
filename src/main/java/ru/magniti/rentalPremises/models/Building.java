@@ -26,8 +26,6 @@ public class Building {
     // street..
     @Column(name = "price")
     private int price;
-    @Column(name = "owner")
-    private String owner;
     @Column(name = "description", columnDefinition = "text")
     private String description;
     // создаём отношение один ко многим (Building тоже должен знать про это отношение)
@@ -36,6 +34,9 @@ public class Building {
     private List<Image> images = new ArrayList<>();
     private Long previewImageId;
     private LocalDateTime dateOfCreated;
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @JoinColumn
+    User user;
 
     @PrePersist // метод инициализации бина в спринге
     private void init() {

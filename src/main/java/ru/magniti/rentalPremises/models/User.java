@@ -6,9 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.magniti.rentalPremises.models.enums.Role;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -16,7 +14,7 @@ import java.util.Set;
 public class User{ // имплементируя UserDetails мы показываем Spring Security, что
     // с помощью модели User мы будем авторизироваться (брать мэйл, пароль и т. д.)
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
     @Column(name = "inn")
@@ -36,4 +34,8 @@ public class User{ // имплементируя UserDetails мы показыв
     // внешний ключ
     @Enumerated(EnumType.STRING) // все роли будут хранится в виде строки
     private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
+    private List<Building> buildings = new ArrayList<>();
+
 }
