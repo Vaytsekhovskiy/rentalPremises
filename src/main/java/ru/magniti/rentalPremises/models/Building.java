@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity // показывает, что класс является референсом к бд
 @Table(name = "buildings") // задаём имя таблицы
 @Data // геттеры, сеттеры, equals, hashCode, canEqual, toString
@@ -29,4 +33,19 @@ public class Building {
 
     @Column(name = "description", columnDefinition = "text")
     private String description;
+    // создаём отношение один ко многим (Building тоже должен знать про это отношение)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "building")
+    // т.к. фотографий много, всё загружать не надо
+    private List<Image> images = new ArrayList<>();
+    private Long previewImageId;
+    private LocalDateTime dateOfCreated;
+
+    @PrePersist // метод инициализации бина в спринге
+    private void init() {
+        dateOfCreated = LocalDateTime.now();
+    }
+    public void addImageToProduct(Image image) {
+        image.setBuilding(this);
+        images.add(image);
+    }
 }

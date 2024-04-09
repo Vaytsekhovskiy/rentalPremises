@@ -25,9 +25,9 @@ public class UserController {
     }
     @PostMapping("/registration")
     public String createUser(User user, Model model) {
-        log.info("1111111111111111111111111111111111111111");
-        model.addAttribute("errorMessage", "Пользователь с таким email уже существует");
+        log.info("post, registration, createUser");
         if (!userService.createUser(user)) {
+            log.info("user {} is already exist", user.getUsername());
             model.addAttribute("errorMessage", "Пользователь с таким email уже существует");
             return "registration";
         }

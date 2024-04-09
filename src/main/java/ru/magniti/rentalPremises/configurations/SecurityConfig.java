@@ -3,44 +3,55 @@ package ru.magniti.rentalPremises.configurations;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import ru.magniti.rentalPremises.services.UserService;
+import ru.magniti.rentalPremises.repositories.UserRepository;
+import ru.magniti.rentalPremises.services.CustomUserDetailsService;
 
-@Configuration // указывает спрингу, что в методах @Bean будут создаваться новые экземпляры, которые надо добавить в бины
-@EnableWebSecurity // позволяет включить поддержку веб-безопасности Spring Security и обеспечить интеграцию Spring MVC
+@Configuration
+@EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig{
-    private final UserService userService;
-    // цепочка фильтров для незарегистрированных пользователей
+public class SecurityConfig {
+    private final UserRepository userRepository;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/", "/building/**", "/registration").permitAll() // можно добавить больше стрингов
+                .csrf((csrf) -> csrf.disable())
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers("/", "/registration", "/buildings/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
                         .loginPage("/login")
                         .permitAll()
                 )
-                .logout(LogoutConfigurer::permitAll)
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/registration")); // Игнорируем CSRF для /registration
-// необходимо потом реализовать csrf токен
+                .logout(LogoutConfigurer::permitAll);
+
         return http.build();
     }
 
-    // создать пользователя и сохранить его в приложении
     @Bean
     public UserDetailsService userDetailsService() {
-        // Passowrd Encoder - интерфейс,
-        // использующаяя для одностороннего преобразования пароля
-
-        return userService; // класс,
-        // использованный для хранения и управления всеми пользователями
+//        UserDetails user = User.builder().username("1").password(encoder.encode("1")).build();
+//        return new InMemoryUserDetailsManager(user);
+        return new CustomUserDetailsService();
     }
-
+    @Bean
+    public AuthenticationProvider authenticationProvider(){
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService());
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
 }
