@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html">
 <head>
     <title>RENTAL PREMISES</title>
     <style>
@@ -11,7 +11,7 @@
             padding: 0;
         }
 
-        h4 {
+        h1, h3 {
             color: red;
         }
 
@@ -20,7 +20,10 @@
         }
 
         input[type="text"],
-        input[type="password"] {
+        input[type="email"],
+        input[type="number"],
+        input[type="password"],
+        input[type="submit"] {
             padding: 8px;
             margin: 5px 0;
             border: 1px solid #ccc;
@@ -32,29 +35,62 @@
             background-color: red;
             color: white;
             cursor: pointer;
-            padding: 8px;
-            border: none;
-            border-radius: 5px;
         }
 
         input[type="submit"]:hover {
             background-color: darkred;
         }
 
-        a {
-            color: red;
-            text-decoration: none;
+        div.container {
+            max-width: 800px;
+            margin: 10px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+
+        form.login label {
+            display: inline-block;
+            width: 80px;
+            text-align: left;
+            margin-bottom: 5px;
+        }
+
+        form.login input[type="text"],
+        form.login input[type="email"],
+        form.login input[type="number"],
+        form.login input[type="password"] {
+            display: inline-block;
+            width: calc(100% - 170px);
+            max-width: 300px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        form.login input[type="submit"] {
+            margin-top: 10px;
+        }
+
     </style>
 </head>
 <body>
-<h4>Авторизация</h4>
-
-<form action="/login" method="post">
-    Эл. почта: <input type="email" name="username"><br><br>
-    Пароль: <input type="password" name="password"><br><br>
-    <input type="submit" value="Вход"/>
-</form>
-<a href="/registration">Зарегистрироваться</a>
+<div class="container">
+    <h1>RENTAL PREMISES</h1>
+    <h3>Добро пожаловать на сайт аренды помещений!</h3>
+    <p>Авторизация</p>
+    <form action="/login" method="post" class="login">
+        <label for="username">Эл. почта:</label>
+        <input type="email" id="username" name="username"/><br><br>
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="password"/><br><br>
+        <input type="submit" value="Вход"/>
+    </form>
+    <form action="/registration" method="get" class="login-form">
+        <input type="submit" value="Зарегистрироваться" class="login-button"/>
+    </form>
+</div>
 </body>
 </html>
