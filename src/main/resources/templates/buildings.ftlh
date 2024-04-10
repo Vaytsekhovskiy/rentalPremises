@@ -1,20 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
     <title>RENTAL PREMISES</title>
 </head>
 <body>
 
 <#if user.username??>
 <form action="/logout" method="post">
-    <h3> Имя пользователя: ${user.username}
+    <h3> Имя пользователя: ${user.username} </h3>
     <input type="submit" value="Выйти из аккаунта"/>
 </form>
 <#if user.isAdmin()>
     <a href="/admin"> Панель администратора</a>
 </#if>
 <#else>
-<a href="/login">Войти</a><h1>
+<h1><a href="/login">Войти</a></h1>
 </#if>
 <form action="/" method="get">
     Поиск по названию здания: <input type="text" name="name"/>
@@ -57,19 +63,47 @@
 <#else>
 <h4> Войдите в аккаунт, чтобы добавить помещение </h4>
 </#if>
-<script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script> <!-- Подключение JavaScript-файла Leaflet -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css"/>
+<#--<script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script> <!-- Подключение JavaScript-файла Leaflet &ndash;&gt;-->
+<#--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css"/>-->
 <div id="map" style="height: 400px;"></div> <!-- Контейнер карты -->
 
+<#--<input id=“freemarkervar” type=“text or hidden” value=“${myVariable}”/>-->
 <script>
     // создание карты
     var map = L.map('map').setView([59.95, 30.40], 10); // Устанавливаем координаты центра карты и уровень масштабирования
     // добавление слоя тайлов
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
+    // список мапов с данными о зданиях
+    var mapBuildings = [
+        <#list buildings as building>
+        {
+            name: "${building.name}",
+            strLocation: "${building.location}",
+            price: "${building.price}",
+            username: "${building.user.username}",
+            description: "${building.description}"
+        }<#sep>,
+        </#list>
+    ];
 
-    // Добавьте маркеры, линии и другие элементы на карту по необходимости
+    for (var i = 0; i < mapBuildings.length; i++) {
+        makeMarker(mapBuildings[i]);
+    }
+
+    async function makeMarker(building) {
+        console.log(building["strLocation"])
+        const response = await fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + building["strLocation"]);
+        const jsonLocation = await response.json();
+        const location = jsonLocation[0];
+        console.log(location)
+        L.marker([location["lat"], location["lon"]]).addTo(map)
+            .bindPopup(
+                '<h1>' + building["name"] + '</h1><br>' + building["strLocation"]
+            );
+    }
 </script>
 </body>
 </html>
