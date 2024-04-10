@@ -1,5 +1,6 @@
 package ru.magniti.rentalPremises.services;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j // логирование
+@Transactional
 public class BuildingService {
     private final BuildingRepository buildingRepository;
     private final UserRepository userRepository;
