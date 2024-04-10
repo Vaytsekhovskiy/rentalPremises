@@ -17,7 +17,7 @@
         <br>
         Цена: ${building.price}
         <br>
-        Владелец: ${building.user.username}
+        Владелец: <a href="/user/${building.user.id}">${building.user.name}</a>
         <br>
         Описание: ${building.description}
     </div>

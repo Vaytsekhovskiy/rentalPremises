@@ -14,7 +14,7 @@ import java.util.*;
 public class User{ // имплементируя UserDetails мы показываем Spring Security, что
     // с помощью модели User мы будем авторизироваться (брать мэйл, пароль и т. д.)
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
     @Column(name = "inn")
@@ -37,5 +37,7 @@ public class User{ // имплементируя UserDetails мы показыв
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     private List<Building> buildings = new ArrayList<>();
-
+    public boolean isAdmin(){
+        return getRoles().contains(Role.ROLE_ADMIN);
+    }
 }
