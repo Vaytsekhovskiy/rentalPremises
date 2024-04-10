@@ -1,5 +1,6 @@
 package ru.magniti.rentalPremises.services;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
         private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
