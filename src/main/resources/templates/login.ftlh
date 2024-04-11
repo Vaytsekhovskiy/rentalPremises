@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns="http://www.w3.org/1999/html">
+<html lang="ru">
 <head>
     <title>RENTAL PREMISES</title>
     <style>
@@ -11,7 +11,7 @@
             padding: 0;
         }
 
-        h1, h3 {
+        h1, h2, h3 {
             color: red;
         }
 
@@ -72,24 +72,45 @@
 
         form.login input[type="submit"] {
             margin-top: 10px;
+            margin-right: 20px;
         }
 
+        /* Добавленные стили */
+        .login-form {
+            display: inline-block;
+        }
+
+        .login-button {
+            margin-left: 10px;
+
+        }
+
+        .heading {
+            display: inline-block; /* Display heading as inline-block */
+            margin-right: 65%; /* Add space between heading and button */
+        }
+
+        .heading:hover {
+            color: darkred;
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>RENTAL PREMISES</h1>
+    <h2 class="heading">
+        <a href="/" style="text-decoration: none; color: inherit;">RENTAL PREMISES</a>
+    </h2>
     <h3>Добро пожаловать на сайт аренды помещений!</h3>
     <p>Авторизация</p>
-    <form action="/login" method="post" class="login">
+    <form action="/login?continue" method="post" class="login">
         <label for="username">Эл. почта:</label>
         <input type="email" id="username" name="username"/><br><br>
         <label for="password">Пароль:</label>
         <input type="password" id="password" name="password"/><br><br>
         <input type="submit" value="Вход"/>
-    </form>
-    <form action="/registration" method="get" class="login-form">
-        <input type="submit" value="Зарегистрироваться" class="login-button"/>
+        <form action="/registration" method="get" class="login-form">
+            <input type="submit" value="Зарегистрироваться" class="login-button"/>
+        </form>
     </form>
 </div>
 </body>

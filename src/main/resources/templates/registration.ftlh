@@ -81,11 +81,22 @@
             margin-top: 10px;
         }
 
+        .heading {
+            display: inline-block; /* Display heading as inline-block */
+            margin-right: 65%; /* Add space between heading and button */
+        }
+
+        .heading:hover {
+            color: darkred;
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <h2>Регистрация</h2>
+    <h2 class="heading">
+        <a href="/" style="text-decoration: none; color: inherit;">RENTAL PREMISES</a>
+    </h2>
+    <h3>Регистрация</h3>
     <form action="/registration" method="post" class="buildings">
         <label for="name">Имя пользователя:</label>
         <input type="text" id="name" name="name"/><br><br>
