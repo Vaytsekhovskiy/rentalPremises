@@ -9,4 +9,5 @@ import java.util.List;
 public interface BuildingRepository extends JpaRepository<Building, Long> { // основное понятие в Spring data jpa
     // наследуясь от JpaRepository мы получаем доступ к основным запросам к БД
     List<Building> findBuildingByName(String name); // автоматически реализовывает по логике названия
+    List<Building> findBuildingByLocation(String location);
 }

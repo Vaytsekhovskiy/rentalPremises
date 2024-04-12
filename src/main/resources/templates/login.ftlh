@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>RENTAL PREMISES</title>
     <style>
@@ -102,16 +102,22 @@
     </h2>
     <h3>Добро пожаловать на сайт аренды помещений!</h3>
     <p>Авторизация</p>
-    <form action="/login?continue" method="post" class="login">
+    <form action="/login" method="post" class="login">
         <label for="username">Эл. почта:</label>
         <input type="email" id="username" name="username"/><br><br>
         <label for="password">Пароль:</label>
         <input type="password" id="password" name="password"/><br><br>
         <input type="submit" value="Вход"/>
-        <form action="/registration" method="get" class="login-form">
-            <input type="submit" value="Зарегистрироваться" class="login-button"/>
-        </form>
+    </form>
+    <form action="/registration" method="get" class="login-form">
+        <input type="submit" value="Зарегистрироваться" class="login-button"/>
     </form>
 </div>
+<script>
+    var isUserLoggedIn = <#if user.username??>true<#else>false</#if>;
+    if (isUserLoggedIn) {
+        window.location.href = "/";
+    }
+</script>
 </body>
 </html>

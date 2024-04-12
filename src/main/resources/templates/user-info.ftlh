@@ -81,8 +81,8 @@
         <a href="/" style="text-decoration: none; color: inherit;">RENTAL PREMISES</a>
     </h2>
     <h3>Подробная информация о пользователе ${user.name}</h3>
-    <b>Номер телефона: </b> ${user.numberPhone}<br>
-    <b>Email: </b> ${user.username}<br>
+    <b>Номер телефона: </b> ${user.numberPhone}<br><br>
+    <b>Email: </b> ${user.username}<br><br>
     <b>ИНН: </b> ${user.inn}<br>
     <h4>Арендные помещения пользователя ${user.name}</h4>
     <#list buildings as building>
