@@ -24,7 +24,8 @@
 </#if>
 <form action="/" method="get">
     Поиск по названию здания: <input type="text" name="name"/> <br>
-    Поиск по локации здания: <input type="text" name="location"/>
+    Поиск по локации здания: <input type="text" name="location"/> <br>
+    Поиск по цене здания: <input type="number" name="price"/> <br>
     <input type="submit" value="Поиск"/>
 </form>
 <#list buildings as building>
