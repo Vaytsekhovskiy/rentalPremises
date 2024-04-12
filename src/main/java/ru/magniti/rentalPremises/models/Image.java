@@ -18,8 +18,6 @@ public class Image {
     private Long id;
     @Column(name = "name")
     private String name;
-    @Column(name = "originalFileName")
-    private String originalFileName;
     @Column(name = "size")
     private Long size;
     @Column(name = "contentType")
