@@ -24,11 +24,14 @@ public class BuildingController {
     @GetMapping("/") // GET запрос, обрабатывает пустой адрес
     public String buildings(
             @RequestParam(name = "name", required = false) String name,
+            @RequestParam (name = "location", required = false) String location,
                             Model model,
                             Principal principal
             )
     { // model передаёт builings в buildings.ftlh
-        model.addAttribute("buildings", buildingService.listBuildings(name));
+        System.out.println(location);
+        System.out.println(name);
+        model.addAttribute("buildings", buildingService.listBuildings(name, location));
         model.addAttribute("user", buildingService.getUserByPrincipal(principal));
         return "buildings"; // возвращает buildings.ftlh
     }

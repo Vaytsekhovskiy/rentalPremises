@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import ru.magniti.rentalPremises.models.Building;
 import ru.magniti.rentalPremises.models.Image;
@@ -75,8 +76,13 @@ public class BuildingService {
         return buildingRepository.findById(id).orElse(null);
     }
 
-    public List<Building> listBuildings(String name) {
-        if (name == null) return buildingRepository.findAll();
-        return buildingRepository.findBuildingByName(name);
+    public List<Building> listBuildings(String name, String location) {
+        if (!StringUtils.isEmpty(name)) { // Импортируйте StringUtils из org.springframework.util
+            return buildingRepository.findBuildingByName(name);
+        }
+        if (!StringUtils.isEmpty(location)) {
+            return buildingRepository.findBuildingByLocation(location);
+        }
+        return buildingRepository.findAll();
     }
 }
