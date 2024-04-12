@@ -61,7 +61,7 @@ public class BuildingService {
     public User getUserByPrincipal(Principal principal) {
         if (principal == null) return new User();
         return userRepository.findUserByUsername(principal.getName()).orElse(new User());
-        // хз что возвращает principal.getName() - name or username?
+
     }
 
     private Image toImageEntity(MultipartFile file) throws IOException {
@@ -82,8 +82,10 @@ public class BuildingService {
     }
 
     public List<Building> listBuildings(String name, String location, Integer price) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        /* метод для возвращения здания по фильтрам */
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder(); // создает экземпляр entity чтобы можно было накинуть запросов
         CriteriaQuery<Building> query = criteriaBuilder.createQuery(Building.class);
+
         Root<Building> root = query.from(Building.class);
         List<Predicate> predicates = new ArrayList<>();
         if (name != null && !StringUtils.isEmpty(name)) { // Импортируйте StringUtils из org.springframework.util
