@@ -30,8 +30,6 @@ public class BuildingController {
                             Principal principal
             )
     { // model передаёт builings в buildings.ftlh
-        System.out.println(location);
-        System.out.println(name);
         model.addAttribute("buildings", buildingService.listBuildings(name, location, price));
         model.addAttribute("user", buildingService.getUserByPrincipal(principal));
         return "buildings"; // возвращает buildings.ftlh
