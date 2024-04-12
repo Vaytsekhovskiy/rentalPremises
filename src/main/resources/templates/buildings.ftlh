@@ -161,7 +161,7 @@
             <input type="submit" value="Выйти из аккаунта" class="login-button"/>
         </form>
         <#if user.isAdmin()>
-            <form action="/admin" method="post" class="login-form">
+            <form action="/admin" method="get" class="login-form">
                 <input type="submit" value="Панель администратора" class="admin-button"/>
             </form>
         </#if>
