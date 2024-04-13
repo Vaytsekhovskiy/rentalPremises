@@ -244,9 +244,14 @@
         <br>
         Описание: ${building.description}
     </div>
-    <form action="/building/delete/${building.id}" method="post" class="login-button">
-        <input type="submit" value="Удалить помещение"/>
-    </form>
+    <#-- Проверяем, является ли текущий пользователь владельцем помещения или администратором -->
+    <#if user.username == building.user.username || user.isAdmin()>
+        <form action="/building/delete/${building.id}" method="post" class="login-button">
+            <input type="submit" value="Удалить помещение"/>
+        </form>
+    <#else>
+        <p>Вы не можете удалить это помещение</p>
+    </#if>
 </div>
 </body>
 </html>

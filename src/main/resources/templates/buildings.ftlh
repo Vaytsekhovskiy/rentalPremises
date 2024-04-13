@@ -176,7 +176,7 @@
         <label for="search">Поиск по локации здания:</label>
         <input type="text" id="search" name="location"/><br>
         <label for="search">Поиск по цене здания:</label>
-        <input type="number" id="search" name="price"/>
+        <input type="number" id="search" name="price"/><br>
         <input type="submit" value="Поиск"/>
     </form>
     <#list buildings as building>
@@ -222,7 +222,6 @@
     <#else>
         <h4> Войдите в аккаунт, чтобы добавить помещение </h4>
     </#if>
-    <iframe frameborder="0" style="border:none;width:100%;height:210px;" width="100%" height="210" src="https://music.yandex.ru/iframe/track/119156834/28165342">Слушайте <a href='https://music.yandex.ru/album/28165342/track/119156834'>Зомби апокалипсис</a> — <a href='https://music.yandex.ru/artist/10880992'>Серега Пират</a> на Яндекс Музыке</iframe>
 </div>
 
 

@@ -24,7 +24,6 @@ public class ImageController {
         Image image = imageRepository.findById(id).orElse(null);
         assert image != null;
         return ResponseEntity.ok()
-                .header("fileName", image.getOriginalFileName())
                 .contentType(MediaType.valueOf(image.getContentType()))
                 .contentLength(image.getSize())
                 .body(new InputStreamResource(new ByteArrayInputStream(image.getBytes())));
