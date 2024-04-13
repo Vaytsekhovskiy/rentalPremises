@@ -172,9 +172,9 @@
     </#if>
     <form action="/" method="get" class="search">
         <label for="search">Поиск по названию здания:</label>
-        <input type="text" id="search" name="name"/>
+        <input type="text" id="search" name="name"/><br>
         <label for="search">Поиск по локации здания:</label>
-        <input type="text" id="search" name="location"/>
+        <input type="text" id="search" name="location"/><br>
         <label for="search">Поиск по цене здания:</label>
         <input type="number" id="search" name="price"/>
         <input type="submit" value="Поиск"/>
