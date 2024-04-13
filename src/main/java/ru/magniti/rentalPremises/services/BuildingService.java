@@ -29,6 +29,7 @@ import java.util.List;
 public class BuildingService {
     private final BuildingRepository buildingRepository;
     private final UserRepository userRepository;
+    private final EntityManager entityManager;
 
     public void saveBuilding(Principal principal, Building building, MultipartFile frontFile,
                              MultipartFile entranceFile, MultipartFile interiorFile) throws IOException { // MultipartFile - внутри фотки
@@ -67,7 +68,6 @@ public class BuildingService {
     private Image toImageEntity(MultipartFile file) throws IOException {
         Image image = new Image();
         image.setName(file.getName());
-        image.setOriginalFileName(file.getOriginalFilename());
         image.setContentType(file.getContentType());
         image.setSize(file.getSize());
         image.setBytes(file.getBytes());
@@ -82,8 +82,21 @@ public class BuildingService {
         return buildingRepository.findById(id).orElse(null);
     }
 
-    public List<Building> listBuildings(String name) {
-        if (name == null) return buildingRepository.findAll();
-        return buildingRepository.findBuildingByName(name);
+    public List<Building> listBuildings(String name, String location, Integer price) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Building> query = criteriaBuilder.createQuery(Building.class);
+        Root<Building> root = query.from(Building.class);
+        List<Predicate> predicates = new ArrayList<>();
+        if (name != null && !StringUtils.isEmpty(name)) { // Импортируйте StringUtils из org.springframework.util
+            predicates.add(criteriaBuilder.equal(root.get("name"), name));
+        }
+        if (location != null && !StringUtils.isEmpty(location)) {
+            predicates.add(criteriaBuilder.equal(root.get("location"), location));
+        }
+        if (price != null){
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("price"), price));
+        }
+        query.select(root).where(predicates.toArray(new Predicate[0]));
+        return entityManager.createQuery(query).getResultList();
     }
 }

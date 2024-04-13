@@ -173,6 +173,10 @@
     <form action="/" method="get" class="search">
         <label for="search">Поиск по названию здания:</label>
         <input type="text" id="search" name="name"/>
+        <label for="search">Поиск по локации здания:</label>
+        <input type="text" id="search" name="location"/>
+        <label for="search">Поиск по цене здания:</label>
+        <input type="number" id="search" name="price"/>
         <input type="submit" value="Поиск"/>
     </form>
     <#list buildings as building>
