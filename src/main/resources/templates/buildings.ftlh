@@ -309,12 +309,7 @@
     </#if>
 </div>
 
-
-<#--<script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script> <!-- Подключение JavaScript-файла Leaflet &ndash;&gt;-->
-<#--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css"/>-->
 <div id="map" style="height: 400px;"></div> <!-- Контейнер карты -->
-
-<#--<input id=“freemarkervar” type=“text or hidden” value=“${myVariable}”/>-->
 <script>
     // создание карты
     var map = L.map('map').setView([59.95, 30.40], 10); // Устанавливаем координаты центра карты и уровень масштабирования
@@ -342,11 +337,9 @@
     }
 
     async function makeMarker(building) {
-        console.log(building["strLocation"])
         const response = await fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + building["strLocation"]);
         const jsonLocation = await response.json();
         const location = jsonLocation[0];
-        console.log(location)
         L.marker([location["lat"], location["lon"]]).addTo(map)
             .bindPopup(
                 '<h3>' + building["name"] + '</h3>' + building["strLocation"] + '<br><form action="/building/'
