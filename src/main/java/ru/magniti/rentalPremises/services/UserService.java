@@ -51,7 +51,7 @@ public class UserService {
                 }
                 userRepository.save(user); // обновляем информацию о пользователе
         }
-        else log.info("User with id = {}; email = {} is not existed", user.getId(), user.getUsername());
+        else log.info("User with id = {} is not existed", id);
     }
 
     public void changeUserRoles(User user, Map<String, String> form) {

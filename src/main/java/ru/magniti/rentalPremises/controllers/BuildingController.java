@@ -24,18 +24,21 @@ public class BuildingController {
     @GetMapping("/") // GET запрос, обрабатывает пустой адрес
     public String buildings(
             @RequestParam(name = "name", required = false) String name,
-                            Model model,
-                            Principal principal
-            )
+            @RequestParam (name = "location", required = false) String location,
+            @RequestParam (name = "price", required = false) Integer price,
+            Model model,
+            Principal principal
+    )
     { // model передаёт builings в buildings.ftlh
-        model.addAttribute("buildings", buildingService.listBuildings(name));
         model.addAttribute("user", buildingService.getUserByPrincipal(principal));
+        model.addAttribute("buildings", buildingService.listBuildings(name, location, price));
         return "buildings"; // возвращает buildings.ftlh
     }
     @GetMapping("/building/{id}") // GET запрос, обрабатывает отдельное помещение
-    public String buildingInfo(Model model, @PathVariable long id) {
+    public String buildingInfo(Model model, @PathVariable long id, Principal principal) {
         model.addAttribute("building", buildingService.getBuildingById(id));
         model.addAttribute("images", buildingService.getBuildingById(id).getImages());
+        model.addAttribute("user", buildingService.getUserByPrincipal(principal));
         return "building-info"; // возвращает building-info.ftlh
     }
     @PostMapping("/building/create")// POST запрос, добавляет здание

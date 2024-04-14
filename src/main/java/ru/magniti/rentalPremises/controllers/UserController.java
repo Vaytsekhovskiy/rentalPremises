@@ -8,16 +8,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.magniti.rentalPremises.models.User;
+import ru.magniti.rentalPremises.services.BuildingService;
 import ru.magniti.rentalPremises.services.UserService;
+
+import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
     private final UserService userService;
+    private final BuildingService buildingService;
 
     @GetMapping("/login")
-    public String login() {
+    public String login(Principal principal, Model model) {
+        model.addAttribute("user", buildingService.getUserByPrincipal(principal));
         return "login";
     }
     @GetMapping("/registration")
