@@ -219,6 +219,17 @@
             margin: 10px auto;
         }
 
+        .image-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+
+        .image-list img {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
     </style>
 
 </head>
@@ -231,9 +242,14 @@
         Подробная информация о помещении
     </h3>
     <div>
-        <#list images as img>
-            <img src="/images/${img.id}" height="80px"><br><br>
-        </#list>
+        <div class="image-list">
+            <#list images as img>
+                <a href="/images/${img.id}" target="_blank">
+                    <img src="/images/${img.id}" height="250px">
+                </a>
+            </#list>
+        </div>
+
         Название: ${building.name}
         <br>
         Расположение: ${building.location}

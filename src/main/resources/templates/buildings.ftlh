@@ -149,14 +149,98 @@
 </head>
 <body>
 <div class="container">
-    <script src="files.js"></script>
+    <script>
+        function checkFiles(input) {
+
+            if (input.files && input.files.length > 5) {
+                alert("Вы можете загрузить не более 5 файлов.");
+                input.value = ''; // Очистка выбранных файлов
+                return;
+            }
+            if (input.files && input.files.length > 0) {
+                for (let i = 0; i < input.files.length; i++) {
+                    var file = input.files[i];
+                    var fileSize = file.size; // Размер файла в байтах
+                    var maxSize = 5 * 1024 * 1024; // Максимальный размер файла в байтах (5 MB)
+
+                    if (!['image/jpeg', 'image/jpg', 'image/png', 'image/gif'].includes(file.type)) {
+                        alert('Пожалуйста, выберите файлы только с расширением .jpg, .jpeg, .png или .gif.');
+                        input.value = ''; // Очистка выбранного файла
+                        return;
+                    }
+
+                    if (fileSize > maxSize) {
+                        alert('Размер файла должен быть меньше 5 МБ.');
+                        input.value = ''; // Очистка выбранного файла
+                        return;
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        function validateForm() {
+            var name = document.getElementById("name").value;
+            var location = document.getElementById("location").value;
+            var price = document.getElementById("price").value;
+            var frontFiles = document.getElementById("frontFile").files;
+            var entranceFiles = document.getElementById("entranceFile").files;
+            var interiorFiles = document.getElementById("interiorFile").files;
+
+            // Check if name, location, and price are empty
+            if (name.trim() === "") {
+                alert("Пожалуйста, заполните поле 'Название'.");
+                return false; // Prevent form submission
+            }
+
+            if (location.trim() === "") {
+                alert("Пожалуйста, заполните поле 'Расположение'.");
+                return false; // Prevent form submission
+            }
+
+            if (price.trim() === "") {
+                alert("Пожалуйста, заполните поле 'Цена'.");
+                return false; // Prevent form submission
+            }
+
+            // Check if price is non-negative
+            if (price < 0) {
+                alert("Цена должна быть неотрицательной.");
+                return false; // Prevent form submission
+            }
+
+            // Check if at least one file has been added
+            if (frontFiles.length === 0 && entranceFiles.length === 0 && interiorFiles.length === 0) {
+                alert("Пожалуйста, добавьте хотя бы один файл.");
+                return false; // Prevent form submission
+            }
+
+            return true; // Allow form submission
+        }
+    </script>
+    <script>
+        function validateSearchForm() {
+            var name = document.getElementById("searchName").value;
+            var location = document.getElementById("searchLocation").value;
+            var price = document.getElementById("searchPrice").value;
+
+            // Check if any search field is not empty
+            if (name.trim() === "" && location.trim() === "" && price.trim() === "") {
+                alert("Пожалуйста, заполните хотя бы одно поле для поиска.");
+                return false; // Prevent form submission
+            }
+
+            return true; // Allow form submission
+        }
+    </script>
     <h2 class="heading">
         <a href="/" style="text-decoration: none; color: inherit;">RENTAL PREMISES</a>
     </h2>
     <#if user.username??>
         <form action="/logout" method="post" class="login-form">
             <h3 class="heading">
-                <a href="/user/${user.id}" style="text-decoration: none; color: inherit;">Имя пользователя: ${user.username}</a>
+                <a href="/user/${user.id}" style="text-decoration: none; color: inherit;">Имя
+                    пользователя: ${user.username}</a>
             </h3>
             <input type="submit" value="Выйти из аккаунта" class="login-button"/>
         </form>
@@ -170,13 +254,13 @@
             <input type="submit" value="Вход" class="login-button"/>
         </form>
     </#if>
-    <form action="/" method="get" class="search">
-        <label for="search">Поиск по названию здания:</label>
-        <input type="text" id="search" name="name"/><br>
-        <label for="search">Поиск по локации здания:</label>
-        <input type="text" id="search" name="location"/><br>
-        <label for="search">Поиск по цене здания:</label>
-        <input type="number" id="search" name="price"/><br>
+    <form action="/" method="get" class="search" onsubmit="return validateSearchForm()">
+        <label for="searchName">Поиск по названию здания:</label>
+        <input type="text" id="searchName" name="name"/><br>
+        <label for="searchLocation">Поиск по локации здания:</label>
+        <input type="text" id="searchLocation" name="location"/><br>
+        <label for="searchPrice">Поиск по цене здания:</label>
+        <input type="number" id="searchPrice" name="price"/><br>
         <input type="submit" value="Поиск"/>
     </form>
     <#list buildings as building>
@@ -199,7 +283,8 @@
         <h3 class="add">Внести новое помещение</h3>
         <!--Передаёт JSON методом POST, спринг получает и автоматически конверирует в Building-->
         <!--Передаёт Building в buildingCreate(Building building)-->
-        <form action="/building/create" method="post" class="buildings" enctype="multipart/form-data">
+        <form action="/building/create" method="post" class="buildings" enctype="multipart/form-data"
+              onsubmit="return validateForm()">
             <label for="name">Название:</label>
             <input type="text" id="name" name="name"/><br><br>
             <label for="location">Расположение:</label>

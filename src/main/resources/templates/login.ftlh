@@ -97,12 +97,32 @@
 </head>
 <body>
 <div class="container">
+    <script>
+        function validateLoginForm() {
+            var email = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            var isValid = true; // Flag to track validity
+
+            // Check if email or password field is empty
+            if (email.trim() === "") {
+                alert("Пожалуйста, введите адрес электронной почты.");
+                isValid = false; // Set flag to false
+            }
+
+            if (password.trim() === "") {
+                alert("Пожалуйста, введите пароль.");
+                isValid = false; // Set flag to false
+            }
+
+            return isValid; // Return the validity flag
+        }
+    </script>
     <h2 class="heading">
         <a href="/" style="text-decoration: none; color: inherit;">RENTAL PREMISES</a>
     </h2>
     <h3>Добро пожаловать на сайт аренды помещений!</h3>
     <p>Авторизация</p>
-    <form action="/login" method="post" class="login">
+    <form action="/login" method="post" class="login" onsubmit="return validateLoginForm()">
         <label for="username">Эл. почта:</label>
         <input type="email" id="username" name="username"/><br><br>
         <label for="password">Пароль:</label>
