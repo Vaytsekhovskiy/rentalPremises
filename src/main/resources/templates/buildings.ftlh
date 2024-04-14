@@ -327,6 +327,7 @@
     var mapBuildings = [
         <#list buildings as building>
         {
+            id: ${building.id},
             name: "${building.name}",
             strLocation: "${building.location}",
             price: "${building.price}",
@@ -348,7 +349,8 @@
         console.log(location)
         L.marker([location["lat"], location["lon"]]).addTo(map)
             .bindPopup(
-                '<h1>' + building["name"] + '</h1><br>' + building["strLocation"]
+                '<h3>' + building["name"] + '</h3>' + building["strLocation"] + '<br><form action="/building/'
+                + building.id + '" method="get" class="login-form"><input type="submit" value="Подробнее..." class="login-button"/></form>'
             );
     }
 </script>
