@@ -272,5 +272,39 @@
         <p>Вы не можете удалить это помещение</p>
     </#if>
 </div>
+
+<div id="map" style="height: 400px;"></div> <!-- Контейнер карты -->
+<script>
+    // создание карты
+    var map = L.map('map').setView([59.95, 30.40], 10); // Устанавливаем координаты центра карты и уровень масштабирования
+    // добавление слоя тайлов
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    // мап (словарь) с данными о здании
+    var buildingData =
+        {
+            id: ${building.id},
+            name: "${building.name}",
+            strLocation: "${building.location}",
+            price: "${building.price}",
+            username: "${building.user.username}",
+            description: "${building.description}"
+        };
+
+    makeMarker(buildingData);
+
+    async function makeMarker(building) {
+        const response = await fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + building["strLocation"]);
+        const jsonLocation = await response.json();
+        const location = jsonLocation[0];
+        L.marker([location["lat"], location["lon"]]).addTo(map)
+            .bindPopup(
+                '<h3>' + building["name"] + '</h3>' + building["strLocation"] + '<br><form action="/building/'
+                + building.id + '" method="get" class="login-form"><input type="submit" value="Подробнее..." class="login-button"/></form>'
+            );
+    }
+</script>
 </body>
 </html>
