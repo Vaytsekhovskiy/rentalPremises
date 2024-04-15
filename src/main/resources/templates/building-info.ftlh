@@ -262,6 +262,16 @@
         <br>
         Описание: ${building.description}
     </div>
+    <#-- Выставление статуса здания админом -->
+    <#if user.isAdmin()>
+        Я админ
+        <form action="/building/approved/${building.id}" method="post">
+            <label for="approvedCheckbox">Статус:</label>
+            <input type="checkbox" id="approvedCheckbox" name="approved"><br>
+            <input type="submit" value="изменить статус"/>
+            <input type="hidden" name="approved" value="false"> <!-- Добавляем скрытое поле с значением false -->
+        </form>
+    </#if>
     <#-- Проверяем, является ли текущий пользователь владельцем помещения или администратором -->
     <#if user.id == building.user.id || user.isAdmin()>
     <#-- НЕ ФИКСИТЬ! АНАЛОГИЧНАЯ ПРИЧИНА-->

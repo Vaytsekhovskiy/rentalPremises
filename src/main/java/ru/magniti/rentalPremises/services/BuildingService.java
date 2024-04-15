@@ -109,4 +109,11 @@ public class BuildingService {
         query.select(root).where(predicates.toArray(new Predicate[0]));
         return entityManager.createQuery(query).getResultList();
     }
+    public void changeBuildingStatus(long buildingId, boolean approved) {
+        Building building = buildingRepository.findById(buildingId)
+                .orElseThrow(() -> new IllegalArgumentException("Building not found with id: " + buildingId));
+        building.setApproved(approved);
+        buildingRepository.save(building);
+    }
+
 }

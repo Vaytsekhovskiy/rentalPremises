@@ -254,6 +254,7 @@
             <input type="submit" value="Вход" class="login-button"/>
         </form>
     </#if>
+    <!--фильтрация зданий-->
     <form action="/" method="get" class="search" onsubmit="return validateSearchForm()">
         <label for="searchName">Поиск по названию здания:</label>
         <input type="text" id="searchName" name="name"/><br>
