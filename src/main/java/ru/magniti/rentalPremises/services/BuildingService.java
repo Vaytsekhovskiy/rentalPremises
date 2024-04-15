@@ -89,7 +89,7 @@ public class BuildingService {
         return buildingRepository.findById(id).orElse(null);
     }
 
-    public List<Building> listBuildings(String name, String location, Integer price) {
+    public List<Building> listBuildings(String name, String location, Integer price, Boolean approved) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Building> query = criteriaBuilder.createQuery(Building.class);
         Root<Building> root = query.from(Building.class);
@@ -102,6 +102,9 @@ public class BuildingService {
         }
         if (price != null){
             predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("price"), price));
+        }
+        if (approved != null) {
+            predicates.add(criteriaBuilder.equal(root.get("approved"), approved));
         }
         query.select(root).where(predicates.toArray(new Predicate[0]));
         return entityManager.createQuery(query).getResultList();

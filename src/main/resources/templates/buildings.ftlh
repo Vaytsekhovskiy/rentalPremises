@@ -261,6 +261,8 @@
         <input type="text" id="searchLocation" name="location"/><br>
         <label for="searchPrice">Поиск по цене здания:</label>
         <input type="number" id="searchPrice" name="price"/><br>
+        <label for="approvedCheckbox">Статус:</label>
+        <input type="checkbox" id="approvedCheckbox" name="approved"><br>
         <input type="submit" value="Поиск"/>
     </form>
     <#list buildings as building>
@@ -279,6 +281,11 @@
             <p>Цена: ${building.price}</p>
             <p>Владелец: ${building.user.username}</p>
             <p>Описание: ${building.description}</p>
+            <#if building.approved>
+                <p>Статус: одобрено</p>
+            <#else>
+                <p>Статус: неодобрено</p>
+            </#if>
             <form action="/building/${building.id}" method="get" class="login-form">
                 <input type="submit" value="Подробнее..." class="login-button"/>
             </form>
