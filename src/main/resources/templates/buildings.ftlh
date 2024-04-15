@@ -210,8 +210,8 @@
             }
 
             // Check if at least one file has been added
-            if (frontFiles.length === 0 && entranceFiles.length === 0 && interiorFiles.length === 0) {
-                alert("Пожалуйста, добавьте хотя бы один файл.");
+            if (frontFiles.length === 0) {
+                alert("Пожалуйста, загрузите картинку фасада.");
                 return false; // Prevent form submission
             }
 
@@ -267,6 +267,13 @@
         <!--реализованно при помощи freeMarker, buildings передаётся через buildings(Model model)-->
         <!--цикл for, проходимся по каждому зданию-->
         <div class="building-info">
+            <#list building.images as img>
+                <#if img.isPreviewImage()>
+                    <a href="/images/${img.id}" target="_blank">
+                        <img src="/images/${img.id}" height="250px">
+                    </a>
+                </#if>
+            </#list>
             <h4>Название: ${building.name}</h4>
             <p>Расположение: ${building.location}</p>
             <p>Цена: ${building.price}</p>

@@ -48,9 +48,8 @@ public class BuildingService {
             entrance = toImageEntity(entranceFile);
             building.addImageToProduct(entrance);
         }
-        if (frontFile.getSize() != 0) {
+        if (interiorFile.getSize() != 0) {
             interior = toImageEntity(interiorFile);
-            interior.setPreviewImage(true);
             building.addImageToProduct(interior);
         }
         log.info("Saving building: name = {}, owner = {}", building.getName(), building.getUser().getUsername());
