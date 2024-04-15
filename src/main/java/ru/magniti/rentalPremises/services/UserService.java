@@ -24,6 +24,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public boolean createUser(User user) {
+        log.info("UserService.createUser(User user)");
         String userEmail = user.getUsername();
         if (userRepository.findUserByUsername(userEmail).isPresent()) return false;
         user.setActive(true);
@@ -39,6 +40,7 @@ public class UserService {
     }
 
     public void banUser(Long id) {
+        log.info("UserService.banUser(Long id)");
         User user = userRepository.findById(id).orElse(null);
         if (user != null) {
                 if (user.isActive()) {
@@ -55,6 +57,7 @@ public class UserService {
     }
 
     public void changeUserRoles(User user, Map<String, String> form) {
+        log.info("UserService.changeUserRoles()");
         Set<String> roles = Arrays.stream(Role.values())
                 .map(Role::name)
                 .collect(Collectors.toSet());

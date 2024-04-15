@@ -256,12 +256,15 @@
         <br>
         Цена: ${building.price}
         <br>
-        Владелец: <a href="/user/${building.user.id}">${building.user.name}</a>
+        Владелец: <a href="/user/${building.user.id}">Подробнее...</a>
+        <#-- НЕ ФИКСИТЬ! Если вместо подробнее поставить building.user.username, по возникает ошибка
+         при чтении LoB объектов-->
         <br>
         Описание: ${building.description}
     </div>
     <#-- Проверяем, является ли текущий пользователь владельцем помещения или администратором -->
-    <#if user.username == building.user.username || user.isAdmin()>
+    <#if user.id == building.user.id || user.isAdmin()>
+    <#-- НЕ ФИКСИТЬ! АНАЛОГИЧНАЯ ПРИЧИНА-->
         <form action="/building/delete/${building.id}" method="post" class="login-button">
             <input type="submit" value="Удалить помещение"/>
         </form>

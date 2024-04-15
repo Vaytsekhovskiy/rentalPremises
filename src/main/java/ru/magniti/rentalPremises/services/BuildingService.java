@@ -59,8 +59,16 @@ public class BuildingService {
     }
 
     public User getUserByPrincipal(Principal principal) {
+        log.info("BuildingService.getUserByPrincipal");
         if (principal == null) return new User();
-        return userRepository.findUserByUsername(principal.getName()).orElse(new User());
+        log.info("BuildingService.getUserByPrincipal. principal is not null ");
+        User user = userRepository.findUserByUsername(principal.getName()).orElse(new User());
+        if (user.getUsername().equals(principal.getName())) {
+            log.info("user {} not found", principal.getName());
+        } else {
+            log.info("user {} was found", principal.getName());
+        }
+        return user;
         // хз что возвращает principal.getName() - name or username?
     }
 
