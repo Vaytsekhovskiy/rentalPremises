@@ -61,4 +61,10 @@ public class BuildingController {
         buildingService.deleteBuilding(id);
         return "redirect:/"; // возвращает buildings.ftlh
     }
+    @PostMapping("/building/approved/{id}") // POST запрос, на изменение статуса
+    public String buildingApproved(@PathVariable long id,
+                                   @RequestParam(name="approved", required = false) Boolean approved){
+        buildingService.changeBuildingStatus(id, approved);
+        return  "redirect:/";
+    }
 }
