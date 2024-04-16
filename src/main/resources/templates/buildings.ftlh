@@ -277,7 +277,7 @@
             <h4>Название: ${building.name}</h4>
             <p>Расположение: ${building.location}</p>
             <p>Цена: ${building.price}</p>
-            <p>Владелец: ${building.user.username}</p>
+            <p>Владелец: ${building.user.name}</p>
             <p>Описание: ${building.description}</p>
             <form action="/building/${building.id}" method="get" class="login-form">
                 <input type="submit" value="Подробнее..." class="login-button"/>
