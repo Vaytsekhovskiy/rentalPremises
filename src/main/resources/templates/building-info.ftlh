@@ -256,12 +256,25 @@
         <br>
         Цена: ${building.price}
         <br>
-        Владелец: <a href="/user/${building.user.id}">${building.user.name}</a>
+        Владелец: <a href="/user/${building.user.id}">Подробнее...</a>
+        <#-- НЕ ФИКСИТЬ! Если вместо подробнее поставить building.user.username, по возникает ошибка
+         при чтении LoB объектов-->
         <br>
         Описание: ${building.description}
     </div>
+    <#-- Выставление статуса здания админом -->
+    <#if user.isAdmin()>
+        Я админ
+        <form action="/building/approved/${building.id}" method="post">
+            <label for="approvedCheckbox">Статус:</label>
+            <input type="checkbox" id="approvedCheckbox" name="approved"><br>
+            <input type="submit" value="изменить статус"/>
+            <input type="hidden" name="approved" value="false"> <!-- Добавляем скрытое поле с значением false -->
+        </form>
+    </#if>
     <#-- Проверяем, является ли текущий пользователь владельцем помещения или администратором -->
-    <#if user.username == building.user.username || user.isAdmin()>
+    <#if user.id == building.user.id || user.isAdmin()>
+    <#-- НЕ ФИКСИТЬ! АНАЛОГИЧНАЯ ПРИЧИНА-->
         <form action="/building/delete/${building.id}" method="post" class="login-button">
             <input type="submit" value="Удалить помещение"/>
         </form>
@@ -269,5 +282,39 @@
         <p>Вы не можете удалить это помещение</p>
     </#if>
 </div>
+
+<div id="map" style="height: 400px;"></div> <!-- Контейнер карты -->
+<script>
+    // создание карты
+    var map = L.map('map').setView([59.95, 30.40], 10); // Устанавливаем координаты центра карты и уровень масштабирования
+    // добавление слоя тайлов
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    // мап (словарь) с данными о здании
+    var buildingData =
+        {
+            id: ${building.id},
+            name: "${building.name}",
+            strLocation: "${building.location}",
+            price: "${building.price}",
+            username: "${building.user.username}",
+            description: "${building.description}"
+        };
+
+    makeMarker(buildingData);
+
+    async function makeMarker(building) {
+        const response = await fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + building["strLocation"]);
+        const jsonLocation = await response.json();
+        const location = jsonLocation[0];
+        L.marker([location["lat"], location["lon"]]).addTo(map)
+            .bindPopup(
+                '<h3>' + building["name"] + '</h3>' + building["strLocation"] + '<br><form action="/building/'
+                + building.id + '" method="get" class="login-form"><input type="submit" value="Подробнее..." class="login-button"/></form>'
+            );
+    }
+</script>
 </body>
 </html>

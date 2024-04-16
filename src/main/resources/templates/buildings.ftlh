@@ -254,6 +254,7 @@
             <input type="submit" value="Вход" class="login-button"/>
         </form>
     </#if>
+    <!--фильтрация зданий-->
     <form action="/" method="get" class="search" onsubmit="return validateSearchForm()">
         <label for="searchName">Поиск по названию здания:</label>
         <input type="text" id="searchName" name="name"/><br>
@@ -261,6 +262,8 @@
         <input type="text" id="searchLocation" name="location"/><br>
         <label for="searchPrice">Поиск по цене здания:</label>
         <input type="number" id="searchPrice" name="price"/><br>
+        <label for="approvedCheckbox">Статус:</label>
+        <input type="checkbox" id="approvedCheckbox" name="approved"><br>
         <input type="submit" value="Поиск"/>
     </form>
     <#list buildings as building>
@@ -279,6 +282,11 @@
             <p>Цена: ${building.price}</p>
             <p>Владелец: ${building.user.name}</p>
             <p>Описание: ${building.description}</p>
+            <#if building.approved>
+                <p>Статус: одобрено</p>
+            <#else>
+                <p>Статус: неодобрено</p>
+            </#if>
             <form action="/building/${building.id}" method="get" class="login-form">
                 <input type="submit" value="Подробнее..." class="login-button"/>
             </form>
@@ -316,12 +324,7 @@
     </#if>
 </div>
 
-
-<#--<script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script> <!-- Подключение JavaScript-файла Leaflet &ndash;&gt;-->
-<#--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css"/>-->
 <div id="map" style="height: 400px;"></div> <!-- Контейнер карты -->
-
-<#--<input id=“freemarkervar” type=“text or hidden” value=“${myVariable}”/>-->
 <script>
     // создание карты
     var map = L.map('map').setView([59.95, 30.40], 10); // Устанавливаем координаты центра карты и уровень масштабирования
@@ -334,6 +337,7 @@
     var mapBuildings = [
         <#list buildings as building>
         {
+            id: ${building.id},
             name: "${building.name}",
             strLocation: "${building.location}",
             price: "${building.price}",
@@ -348,14 +352,13 @@
     }
 
     async function makeMarker(building) {
-        console.log(building["strLocation"])
         const response = await fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + building["strLocation"]);
         const jsonLocation = await response.json();
         const location = jsonLocation[0];
-        console.log(location)
         L.marker([location["lat"], location["lon"]]).addTo(map)
             .bindPopup(
-                '<h1>' + building["name"] + '</h1><br>' + building["strLocation"]
+                '<h3>' + building["name"] + '</h3>' + building["strLocation"] + '<br><form action="/building/'
+                + building.id + '" method="get" class="login-form"><input type="submit" value="Подробнее..." class="login-button"/></form>'
             );
     }
 </script>
