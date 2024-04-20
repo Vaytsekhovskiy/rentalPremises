@@ -29,7 +29,7 @@ public class UserService {
         if (userRepository.findUserByUsername(userEmail).isPresent()) return false;
         user.setActive(true);
         user.getRoles().add(Role.ROLE_ADMIN); // здесь можно поменять на ROLE_ADMIN
-        //user.setPassword(user.getPassword());
+//        user.setPassword(user.getPassword());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         log.info("Saving new User with email: {}", userEmail);
         userRepository.save(user);

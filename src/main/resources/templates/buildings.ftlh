@@ -28,7 +28,8 @@
         input[type="text"],
         input[type="number"],
         input[type="submit"],
-        input[type="file"] {
+        input[type="file"],
+        input[type="checkbox"] {
             padding: 8px;
             margin: 5px 0;
             border: 1px solid #ccc;
@@ -128,6 +129,12 @@
             text-align: right;
         }
 
+        /* ... previous CSS ... */
+
+        form.search label { /* Target all labels within the form */
+            width: 188px; /* Adjust the width as needed */
+        }
+
         .building-info {
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -143,6 +150,114 @@
 
         .building-info p {
             margin: 5px 0;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(154px);
+            -ms-transform: translateX(154px);
+            transform: translateX(154px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* ... previous CSS ... */
+
+        .checkbox-wrapper {
+            display: flex; /* Use flexbox for alignment */
+            align-items: center; /* Align items vertically to the middle */
+            justify-content: flex-end;
+        }
+
+        .checkbox-wrapper label:first-child { /* Target the text label */
+            margin-right: 3px; /* Add some space between the label and switch */
+        }
+
+        .admin-form {
+            margin: 0;
+            text-align: right;
+        }
+
+        .username {
+            text-align: right;
+            margin: 0;
+        }
+
+        .username:hover {
+            color: darkred;
+        }
+
+        .building-flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .building-info {
+            width: calc(50% - 10px); /* 50% width for each card with 10px spacing */
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 768px) {
+            .building-info {
+                width: calc(100% - 10px); /* On smaller screens, show one card per line */
+            }
         }
 
     </style>
@@ -237,15 +352,15 @@
         <a href="/" style="text-decoration: none; color: inherit;">RENTAL PREMISES</a>
     </h2>
     <#if user.username??>
-        <form action="/logout" method="post" class="login-form">
-            <h3 class="heading">
+        <form action="/logout" method="post" class="admin-form">
+            <h3 class="username">
                 <a href="/user/${user.id}" style="text-decoration: none; color: inherit;">Имя
                     пользователя: ${user.username}</a>
             </h3>
             <input type="submit" value="Выйти из аккаунта" class="login-button"/>
         </form>
         <#if user.isAdmin()>
-            <form action="/admin" method="get" class="login-form">
+            <form action="/admin" method="get" class="admin-form">
                 <input type="submit" value="Панель администратора" class="admin-button"/>
             </form>
         </#if>
@@ -258,42 +373,53 @@
     <form action="/" method="get" class="search" onsubmit="return validateSearchForm()">
         <label for="searchName">Поиск по названию здания:</label>
         <input type="text" id="searchName" name="name"/><br>
+
         <label for="searchLocation">Поиск по локации здания:</label>
         <input type="text" id="searchLocation" name="location"/><br>
+
         <label for="searchPrice">Поиск по цене здания:</label>
         <input type="number" id="searchPrice" name="price"/><br>
-        <label for="approvedCheckbox">Статус:</label>
-        <input type="checkbox" id="approvedCheckbox" name="approved"><br>
+
+        <div class="checkbox-wrapper">
+            <label for="approvedSwitch">Одобрено:</label>
+            <label class="switch">
+                <input type="checkbox" id="approvedSwitch" name="approved">
+                <span class="slider round"></span>
+            </label>
+        </div>
+
         <input type="submit" value="Поиск"/>
     </form>
-    <#list buildings as building>
-        <!--реализованно при помощи freeMarker, buildings передаётся через buildings(Model model)-->
-        <!--цикл for, проходимся по каждому зданию-->
-        <div class="building-info">
-            <#list building.images as img>
-                <#if img.isPreviewImage()>
-                    <a href="/images/${img.id}" target="_blank">
-                        <img src="/images/${img.id}" height="250px">
-                    </a>
+    <div class="building-flex-container">
+        <#list buildings as building>
+            <!--реализованно при помощи freeMarker, buildings передаётся через buildings(Model model)-->
+            <!--цикл for, проходимся по каждому зданию-->
+            <div class="building-info">
+                <#list building.images as img >
+                    <#if img.isPreviewImage()>
+                        <a href="/images/${img.id}" target="_blank">
+                            <img src="/images/${img.id}" height="250px">
+                        </a>
+                    </#if>
+                </#list>
+                <h4>Название: ${building.name}</h4>
+                <p>Расположение: ${building.location}</p>
+                <p>Цена: ${building.price}</p>
+                <p>Владелец: ${building.user.name}</p>
+                <p>Описание: ${building.description}</p>
+                <#if building.approved>
+                    <p>Статус: одобрено</p>
+                <#else>
+                    <p>Статус: неодобрено</p>
                 </#if>
-            </#list>
-            <h4>Название: ${building.name}</h4>
-            <p>Расположение: ${building.location}</p>
-            <p>Цена: ${building.price}</p>
-            <p>Владелец: ${building.user.name}</p>
-            <p>Описание: ${building.description}</p>
-            <#if building.approved>
-                <p>Статус: одобрено</p>
-            <#else>
-                <p>Статус: неодобрено</p>
-            </#if>
-            <form action="/building/${building.id}" method="get" class="login-form">
-                <input type="submit" value="Подробнее..." class="login-button"/>
-            </form>
-        </div>
-    <#else>
-        <h3 class="search-error">Ничего не найдено</h3>
-    </#list>
+                <form action="/building/${building.id}" method="get" class="login-form">
+                    <input type="submit" value="Подробнее..." class="login-button"/>
+                </form>
+            </div>
+        <#else>
+            <h3 class="search-error">Ничего не найдено</h3>
+        </#list>
+    </div>
     <#if user.username??>
         <h3 class="add">Внести новое помещение</h3>
         <!--Передаёт JSON методом POST, спринг получает и автоматически конверирует в Building-->
