@@ -260,6 +260,18 @@
             }
         }
 
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .image-container img {
+            max-height: 250px;
+            max-width: 100%;
+        }
+
     </style>
 </head>
 <body>
@@ -395,13 +407,15 @@
             <!--реализованно при помощи freeMarker, buildings передаётся через buildings(Model model)-->
             <!--цикл for, проходимся по каждому зданию-->
             <div class="building-info">
-                <#list building.images as img >
-                    <#if img.isPreviewImage()>
-                        <a href="/images/${img.id}" target="_blank">
-                            <img src="/images/${img.id}" height="250px">
-                        </a>
-                    </#if>
-                </#list>
+                <div class="image-container">
+                    <#list building.images as img>
+                        <#if img.isPreviewImage()>
+                            <a href="/images/${img.id}" target="_blank">
+                                <img src="/images/${img.id}" height="250px">
+                            </a>
+                        </#if>
+                    </#list>
+                </div>
                 <h4>Название: ${building.name}</h4>
                 <p>Расположение: ${building.location}</p>
                 <p>Цена: ${building.price}</p>
