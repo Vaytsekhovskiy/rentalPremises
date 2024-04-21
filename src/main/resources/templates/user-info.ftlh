@@ -96,6 +96,16 @@
     <#else>
         <h3>У пользователя нет арендных помещений</h3>
     </#list>
+    <#if current_user.isAdmin()>
+        <h4>Логи действий администратора</h4>
+        <#list logs as log>
+            <div>
+                ${log.getStringDate()}: ${log.description}
+            </div>
+        <#else>
+            <h3>Логи отсутствуют</h3>
+        </#list>
+    </#if>
     <#--<#if errorMessage??>-->
     <#--    <h2 style="color: red">${errorMessage}</h2>-->
     <#--</#if>-->
