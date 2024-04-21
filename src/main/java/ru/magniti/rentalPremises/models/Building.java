@@ -53,6 +53,8 @@ public class Building {
     private int price;
     @Column(name = "description", columnDefinition = "text")
     private String description;
+    @Column(name="approved", columnDefinition="BOOLEAN DEFAULT FALSE")
+    private boolean approved;
     // создаём отношение один ко многим (Building тоже должен знать про это отношение)
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "building")
     // т.к. фотографий много, всё загружать не надо
