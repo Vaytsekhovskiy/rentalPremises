@@ -121,7 +121,21 @@
         }
 
         h3.add {
-            text-align: center;
+            margin-left: 280px;
+            margin-right: 280px;
+            cursor: pointer;
+        }
+
+        .add:hover {
+            color: darkred;
+        }
+
+        .alt-login {
+            margin: 0 209px;
+        }
+
+        .alt-login:hover {
+            color: darkred;
         }
 
         .heading {
@@ -491,11 +505,11 @@
         </#list>
     </div>
     <#if user.username??>
-        <h3 class="add">Внести новое помещение</h3>
+        <h3 id="addRoomBtn" class="add">Внести новое помещение</h3>
         <!--Передаёт JSON методом POST, спринг получает и автоматически конверирует в Building-->
         <!--Передаёт Building в buildingCreate(Building building)-->
-        <form action="/building/create" method="post" class="buildings" enctype="multipart/form-data"
-              onsubmit="return validateForm()">
+        <form id="addRoomForm" action="/building/create" method="post" class="buildings" enctype="multipart/form-data"
+              onsubmit="return validateForm()" style="display: none;">
             <label for="name">Название:</label>
             <input type="text" id="name" name="name"/><br><br>
 
@@ -615,11 +629,25 @@
             <input type="submit" value="Добавить помещение"/>
         </form>
     <#else>
-        <h4> Войдите в аккаунт, чтобы добавить помещение </h4>
+        <h4 class="alt-login">
+            <a href="/login" style="text-decoration: none; color: inherit;">Войдите в аккаунт, чтобы добавить помещение</a>
+        </h4>
     </#if>
+    <script>
+        // Функция, которая отображает или скрывает форму при нажатии на кнопку "Внести новое помещение"
+        document.getElementById('addRoomBtn').addEventListener('click', function() {
+            var addRoomForm = document.getElementById('addRoomForm');
+            if (addRoomForm.style.display === 'none') {
+                addRoomForm.style.display = 'block'; // Показываем форму
+            } else {
+                addRoomForm.style.display = 'none'; // Скрываем форму
+            }
+        });
+    </script>
 </div>
 
 <div id="map" style="height: 400px;"></div> <!-- Контейнер карты -->
+
 <script>
     // создание карты
     var map = L.map('map').setView([59.95, 30.40], 10); // Устанавливаем координаты центра карты и уровень масштабирования
