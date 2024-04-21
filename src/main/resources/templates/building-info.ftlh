@@ -230,6 +230,18 @@
             margin-bottom: 10px;
         }
 
+        /* убрать стрелки у input type="number" */
+        /* Chrome, Safari, Edge, Opera */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
     </style>
 
 </head>
@@ -252,7 +264,24 @@
 
         Название: ${building.name}
         <br>
-        Расположение: ${building.location}
+        Расположение: ${building.strLocation}
+        <#if building.floor?trim != ''>, этаж ${building.floor}</#if>
+        <#if building.roomNo?trim != ''>, помещение ${building.roomNo}</#if>
+        <br>
+        Тип помещения:
+        <#switch building.type>
+            <#case "BUILDING">
+                Отдельное здание
+                <#break>
+            <#case "MALL">
+                ТЦ, ТРЦ, ТРК
+                <#break>
+            <#case "FIRST_FLOOR">
+                Первый этаж МКД
+                <#break>
+            <#default>
+                Не указано
+        </#switch>
         <br>
         Цена: ${building.price}
         <br>
@@ -297,7 +326,9 @@
         {
             id: ${building.id},
             name: "${building.name}",
-            strLocation: "${building.location}",
+            strLocation: "${building.strLocation}",
+            lat: "${building.lat?cn}",
+            lon: "${building.lon?cn}",
             price: "${building.price}",
             username: "${building.user.username}",
             description: "${building.description}"
@@ -305,11 +336,8 @@
 
     makeMarker(buildingData);
 
-    async function makeMarker(building) {
-        const response = await fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + building["strLocation"]);
-        const jsonLocation = await response.json();
-        const location = jsonLocation[0];
-        L.marker([location["lat"], location["lon"]]).addTo(map)
+    function makeMarker(building) {
+        L.marker([building.lat, building.lon]).addTo(map)
             .bindPopup(
                 '<h3>' + building["name"] + '</h3>' + building["strLocation"] + '<br><form action="/building/'
                 + building.id + '" method="get" class="login-form"><input type="submit" value="Подробнее..." class="login-button"/></form>'

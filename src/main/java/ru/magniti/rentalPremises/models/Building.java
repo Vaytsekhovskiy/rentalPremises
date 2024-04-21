@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.magniti.rentalPremises.models.enums.buildingType;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,9 +22,33 @@ public class Building {
     private Long id;
     @Column(name = "name")
     private String name;
-    @Column(name = "location")
-    private String location;
-    // street..
+    @Column(name = "strLocation") // местоположение в виде строки от юзера в свободной форме, храним на всякий
+    private String strLocation;
+    // детальное местоположение:
+    @Column(name = "lat")
+    private double lat;
+    @Column(name = "lon")
+    private double lon;
+    @Column(name = "country")
+    private String country;
+    @Column(name = "state") // субъект рф (по номенклатуре OSM)
+    private String state;
+    @Column(name = "county") // район субъекта рф (по номенклатуре OSM)
+    private String county;
+    @Column(name = "city")
+    private String city;
+    @Column(name = "road")
+    private String road;
+    @Column(name = "buildingNo")
+    private String buildingNo;
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    private buildingType type;
+    @Column(name = "floor")
+    private String floor; // стринг на случай если где-то есть этаж 1A и 1B
+    @Column(name = "roomNo")
+    private String roomNo;
+    // ...
     @Column(name = "price")
     private int price;
     @Column(name = "description", columnDefinition = "text")
@@ -39,6 +64,7 @@ public class Building {
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn
     User user;
+
     @PrePersist // метод инициализации бина в спринге
     private void init() {
         dateOfCreated = LocalDateTime.now();

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import ru.magniti.rentalPremises.models.Building;
+import ru.magniti.rentalPremises.models.enums.buildingType;
 import ru.magniti.rentalPremises.services.BuildingService;
 import ru.magniti.rentalPremises.services.UserService;
 
