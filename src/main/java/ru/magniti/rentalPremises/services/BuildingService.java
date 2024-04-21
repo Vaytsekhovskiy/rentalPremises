@@ -82,9 +82,8 @@ public class BuildingService {
         return image;
     }
 
-    public void deleteBuilding(long id, User user) {
+    public void deleteBuilding(long id) {
         buildingRepository.deleteById(id);
-        user.addLog(String.format("Удалил здание, id = %s", id));
     }
 
     public Building getBuildingById(long id) {

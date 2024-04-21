@@ -60,7 +60,8 @@ public class BuildingController {
     }
     @PostMapping("/building/delete/{id}")// POST запрос, удаляет здание
     public String buildingDelete(@PathVariable long id, Principal principal) {
-        buildingService.deleteBuilding(id, buildingService.getUserByPrincipal(principal));
+        buildingService.deleteBuilding(id);
+        buildingService.getUserByPrincipal(principal).addLog(String.format("Удалил здание, id = %s", id));
         return "redirect:/"; // возвращает buildings.ftlh
     }
     @PostMapping("/building/approved/{id}") // POST запрос, на изменение статуса
