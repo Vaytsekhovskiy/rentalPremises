@@ -35,7 +35,8 @@ public class BuildingService {
                              MultipartFile entranceFile, MultipartFile interiorFile) throws IOException { // MultipartFile - внутри фотки
         // будем принимать три фото: фасад здания, вход, интерьер
         // principal - передаёт состояние пользователя в приложении (некоторая обёртка)
-        building.setUser(getUserByPrincipal(principal));
+        User user = getUserByPrincipal(principal);
+        building.setUser(user);
         Image front;
         Image entrance;
         Image interior;
@@ -48,21 +49,28 @@ public class BuildingService {
             entrance = toImageEntity(entranceFile);
             building.addImageToProduct(entrance);
         }
-        if (frontFile.getSize() != 0) {
+        if (interiorFile.getSize() != 0) {
             interior = toImageEntity(interiorFile);
-            interior.setPreviewImage(true);
             building.addImageToProduct(interior);
         }
-        log.info("Saving building: name = {}, owner = {}", building.getName(), building.getUser().getUsername());
         Building buildingFromDB = buildingRepository.save(building);
+        log.info("Saving building: name = {}, owner = {}", building.getName(), building.getUser().getUsername());
+        user.addLog(String.format("Создал помещение: %s", building.getName()));
         buildingFromDB.setPreviewImageId(buildingFromDB.getImages().get(0).getId());
         buildingRepository.save(building);
     }
 
     public User getUserByPrincipal(Principal principal) {
+        log.info("BuildingService.getUserByPrincipal");
         if (principal == null) return new User();
-        return userRepository.findUserByUsername(principal.getName()).orElse(new User());
-        // хз что возвращает principal.getName() - name or username?
+        log.info("BuildingService.getUserByPrincipal. principal is not null ");
+        User user = userRepository.findUserByUsername(principal.getName()).orElse(new User());
+        if (user.getUsername().equals(principal.getName())) {
+            log.info("user {} not found", principal.getName());
+        } else {
+            log.info("user {} was found", principal.getName());
+        }
+        return user;
     }
 
     private Image toImageEntity(MultipartFile file) throws IOException {
@@ -74,15 +82,16 @@ public class BuildingService {
         return image;
     }
 
-    public void deleteBuilding(long id) {
+    public void deleteBuilding(long id, User user) {
         buildingRepository.deleteById(id);
+        user.addLog(String.format("Удалил здание, id = %s", id));
     }
 
     public Building getBuildingById(long id) {
         return buildingRepository.findById(id).orElse(null);
     }
 
-    public List<Building> listBuildings(String name, String location, Integer price) {
+    public List<Building> listBuildings(String name, String location, Integer price, Boolean approved) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Building> query = criteriaBuilder.createQuery(Building.class);
         Root<Building> root = query.from(Building.class);
@@ -96,7 +105,19 @@ public class BuildingService {
         if (price != null){
             predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("price"), price));
         }
+        if (approved != null) {
+            predicates.add(criteriaBuilder.equal(root.get("approved"), approved));
+        }
         query.select(root).where(predicates.toArray(new Predicate[0]));
         return entityManager.createQuery(query).getResultList();
     }
+    public void changeBuildingStatus(long buildingId, boolean approved, User admin) {
+        Building building = buildingRepository.findById(buildingId)
+                .orElseThrow(() -> new IllegalArgumentException("Building not found with id: " + buildingId));
+        building.setApproved(approved);
+        buildingRepository.save(building);
+        if (approved) admin.addLog(String.format("Одобрил помещение, id = %d", buildingId));
+        else admin.addLog(String.format("Не одобрил помещение, id = %d", buildingId));
+    }
+
 }

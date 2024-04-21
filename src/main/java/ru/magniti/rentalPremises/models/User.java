@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.magniti.rentalPremises.models.enums.Role;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -37,7 +38,16 @@ public class User{ // имплементируя UserDetails мы показыв
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     private List<Building> buildings = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
+    private List<Log> logs = new ArrayList<>();
     public boolean isAdmin(){
         return getRoles().contains(Role.ROLE_ADMIN);
+    }
+    public void addLog(String description){
+        Log log = new Log();
+        log.setUser(this);
+        log.setDescription(description);
+        logs.add(log);
     }
 }
