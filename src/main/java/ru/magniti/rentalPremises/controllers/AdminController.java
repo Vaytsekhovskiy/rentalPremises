@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.magniti.rentalPremises.models.User;
 import ru.magniti.rentalPremises.models.enums.Role;
+import ru.magniti.rentalPremises.services.BuildingService;
 import ru.magniti.rentalPremises.services.UserService;
 
+import java.security.Principal;
 import java.util.Map;
 
 @Slf4j
@@ -21,6 +23,7 @@ import java.util.Map;
 @PreAuthorize("hasAuthority('ROLE_ADMIN')")
 public class AdminController {
     private final UserService userService;
+    private final BuildingService buildingService;
 
     @GetMapping("/admin")
     public String admin(Model model) {
@@ -28,8 +31,8 @@ public class AdminController {
         return "admin";
     }
     @PostMapping("/admin/user/ban/{id}")
-    public String userBan(@PathVariable("id") Long id) {
-        userService.banUser(id);
+    public String userBan(@PathVariable("id") Long id, Principal principal) {
+        userService.banUser(id, buildingService.getUserByPrincipal(principal));
         return "redirect:/admin";
     }
     @GetMapping("/admin/user/edit/{user}")
@@ -39,8 +42,13 @@ public class AdminController {
         return "user-edit";
     }
     @PostMapping("/admin/user/edit")
-    public String userEdit(@RequestParam("userId") User user, @RequestParam Map<String, String> form) {
-        userService.changeUserRoles(user, form);
+    public String userEdit
+            (
+                    @RequestParam("userId") User user,
+                    @RequestParam Map<String, String> form,
+                    Principal principal
+            ) {
+        userService.changeUserRoles(user, form, buildingService.getUserByPrincipal(principal));
         return "redirect:/admin";
     }
 }

@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import ru.magniti.rentalPremises.models.Building;
+import ru.magniti.rentalPremises.models.enums.buildingType;
 import ru.magniti.rentalPremises.services.BuildingService;
+import ru.magniti.rentalPremises.services.UserService;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -21,6 +23,7 @@ import java.security.Principal;
 public class BuildingController {
     private final BuildingService buildingService; // final, т.к. @RequiredArgsConstructor
     // должен понять, что экземпляр создаётся ток в конструкторе
+    private final UserService userService;
     @GetMapping("/") // GET запрос, обрабатывает пустой адрес
     public String buildings(
             @RequestParam(name = "name", required = false) String name,
@@ -57,14 +60,16 @@ public class BuildingController {
         return "redirect:/"; // возвращает buildings.ftlh
     }
     @PostMapping("/building/delete/{id}")// POST запрос, удаляет здание
-    public String buildingDelete(@PathVariable long id) {
+    public String buildingDelete(@PathVariable long id, Principal principal) {
         buildingService.deleteBuilding(id);
+        buildingService.getUserByPrincipal(principal).addLog(String.format("Удалил здание, id = %s", id));
         return "redirect:/"; // возвращает buildings.ftlh
     }
     @PostMapping("/building/approved/{id}") // POST запрос, на изменение статуса
     public String buildingApproved(@PathVariable long id,
-                                   @RequestParam(name="approved", required = false) Boolean approved){
-        buildingService.changeBuildingStatus(id, approved);
+                                   @RequestParam(name="approved", required = false) Boolean approved,
+                                   Principal principal){
+        buildingService.changeBuildingStatus(id, approved, buildingService.getUserByPrincipal(principal));
         return  "redirect:/";
     }
 }

@@ -9,10 +9,8 @@ import ru.magniti.rentalPremises.models.User;
 import ru.magniti.rentalPremises.models.enums.Role;
 import ru.magniti.rentalPremises.repositories.UserRepository;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.security.Principal;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,7 +26,7 @@ public class UserService {
         String userEmail = user.getUsername();
         if (userRepository.findUserByUsername(userEmail).isPresent()) return false;
         user.setActive(true);
-        user.getRoles().add(Role.ROLE_ADMIN); // здесь можно поменять на ROLE_ADMIN
+        user.getRoles().add(Role.ROLE_USER); // здесь можно поменять на ROLE_ADMIN
 //        user.setPassword(user.getPassword());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         log.info("Saving new User with email: {}", userEmail);
@@ -39,16 +37,18 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public void banUser(Long id) {
+    public void banUser(Long id, User admin) {
         log.info("UserService.banUser(Long id)");
         User user = userRepository.findById(id).orElse(null);
         if (user != null) {
                 if (user.isActive()) {
                     user.setActive(false);
+                    admin.addLog(String.format("Заблокировал пользователя \"%s\"", user.getUsername()));
                     log.info("User with id = {}; email = {} was banned", user.getId(), user.getUsername());
                 }
                 else {
                     user.setActive(true);
+                    admin.addLog(String.format("Разблокировал пользователя \"%s\"", user.getUsername()));
                     log.info("User with id = {}; email = {} was unbanned", user.getId(), user.getUsername());
                 }
                 userRepository.save(user); // обновляем информацию о пользователе
@@ -56,7 +56,7 @@ public class UserService {
         else log.info("User with id = {} is not existed", id);
     }
 
-    public void changeUserRoles(User user, Map<String, String> form) {
+    public void changeUserRoles(User user, Map<String, String> form, User admin) {
         log.info("UserService.changeUserRoles()");
         Set<String> roles = Arrays.stream(Role.values())
                 .map(Role::name)
@@ -64,6 +64,9 @@ public class UserService {
         user.getRoles().clear();
         for (String key : form.keySet()) {
             if (roles.contains(key)) {
+                if (key.equals(Role.ROLE_USER.getAuthority())) {
+                    admin.addLog(String.format("Выдал пользователю \"%s\" права администратора", user.getUsername()));
+                }
                 user.getRoles().add(Role.valueOf(key));
             }
         }

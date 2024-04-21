@@ -35,7 +35,8 @@ public class BuildingService {
                              MultipartFile entranceFile, MultipartFile interiorFile) throws IOException { // MultipartFile - внутри фотки
         // будем принимать три фото: фасад здания, вход, интерьер
         // principal - передаёт состояние пользователя в приложении (некоторая обёртка)
-        building.setUser(getUserByPrincipal(principal));
+        User user = getUserByPrincipal(principal);
+        building.setUser(user);
         Image front;
         Image entrance;
         Image interior;
@@ -52,8 +53,9 @@ public class BuildingService {
             interior = toImageEntity(interiorFile);
             building.addImageToProduct(interior);
         }
-        log.info("Saving building: name = {}, owner = {}", building.getName(), building.getUser().getUsername());
         Building buildingFromDB = buildingRepository.save(building);
+        log.info("Saving building: name = {}, owner = {}", building.getName(), building.getUser().getUsername());
+        user.addLog(String.format("Создал помещение: %s", building.getName()));
         buildingFromDB.setPreviewImageId(buildingFromDB.getImages().get(0).getId());
         buildingRepository.save(building);
     }
@@ -69,7 +71,6 @@ public class BuildingService {
             log.info("user {} was found", principal.getName());
         }
         return user;
-        // хз что возвращает principal.getName() - name or username?
     }
 
     private Image toImageEntity(MultipartFile file) throws IOException {
@@ -109,11 +110,13 @@ public class BuildingService {
         query.select(root).where(predicates.toArray(new Predicate[0]));
         return entityManager.createQuery(query).getResultList();
     }
-    public void changeBuildingStatus(long buildingId, boolean approved) {
+    public void changeBuildingStatus(long buildingId, boolean approved, User admin) {
         Building building = buildingRepository.findById(buildingId)
                 .orElseThrow(() -> new IllegalArgumentException("Building not found with id: " + buildingId));
         building.setApproved(approved);
         buildingRepository.save(building);
+        if (approved) admin.addLog(String.format("Одобрил помещение, id = %d", buildingId));
+        else admin.addLog(String.format("Не одобрил помещение, id = %d", buildingId));
     }
 
 }

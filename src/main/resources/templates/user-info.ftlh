@@ -88,7 +88,7 @@
     <#list buildings as building>
         <div>
             <form action="/building/${building.id}" method="get" class="login-form">
-                <label <#--for="submit"-->> <p><b>${building.name}</b> ${building.price} руб. | </label>
+                <label <#--for="submit"-->><p><b>${building.name}</b> ${building.price} руб. |</label>
                 <input type="submit" value="Подробнее..." class="login-button"/>
             </form>
         </div>
@@ -96,6 +96,20 @@
     <#else>
         <h3>У пользователя нет арендных помещений</h3>
     </#list>
+    <#if current_user.isAdmin()>
+        <#if user.isAdmin()>
+            <h4>Логи действий администратора</h4>
+        <#else>
+            <h4>Логи действий пользователя</h4>
+        </#if>
+        <#list logs as log>
+            <div>
+                ${log.getStringDate()}: ${log.description}
+            </div>
+        <#else>
+            <h3>Логи отсутствуют</h3>
+        </#list>
+    </#if>
     <#--<#if errorMessage??>-->
     <#--    <h2 style="color: red">${errorMessage}</h2>-->
     <#--</#if>-->
