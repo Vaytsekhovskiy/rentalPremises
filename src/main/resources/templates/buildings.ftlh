@@ -25,11 +25,17 @@
             margin-bottom: 20px;
         }
 
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
         input[type="text"],
         input[type="number"],
         input[type="submit"],
-        input[type="file"],
-        input[type="checkbox"] {
+        select,
+        input[type="button"],
+        input[type="file"] {
             padding: 8px;
             margin: 5px 0;
             border: 1px solid #ccc;
@@ -41,13 +47,18 @@
             background-color: darkgrey;
         }
 
-        input[type="submit"] {
+        input[type="submit"],
+        input[type="button"] {
             background-color: red;
             color: white;
             cursor: pointer;
         }
 
         input[type="submit"]:hover {
+            background-color: darkred;
+        }
+
+        input[type="button"]:hover {
             background-color: darkred;
         }
 
@@ -88,6 +99,7 @@
 
         form.buildings input[type="text"],
         form.buildings input[type="number"],
+        select,
         form.buildings input[type="file"] {
             display: inline-block; /* Make inputs display as inline-block */
             width: calc(100% - 170px); /* Set the width of inputs, accounting for label width and margin */
@@ -97,6 +109,14 @@
 
         form.buildings input[type="submit"] {
             margin-top: 10px; /* Add space above the submit button */
+        }
+
+        #detailedLocationTable {
+            display: inline-table;
+        }
+
+        #detailedLocationTable input {
+            background-color: darkgrey;
         }
 
         h3.add {
@@ -129,12 +149,6 @@
             text-align: right;
         }
 
-        /* ... previous CSS ... */
-
-        form.search label { /* Target all labels within the form */
-            width: 188px; /* Adjust the width as needed */
-        }
-
         .building-info {
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -151,115 +165,22 @@
         .building-info p {
             margin: 5px 0;
         }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        input:checked + .slider {
-            background-color: #2196F3;
-        }
-
-        input:focus + .slider {
-            box-shadow: 0 0 1px #2196F3;
-        }
-
-        input:checked + .slider:before {
-            -webkit-transform: translateX(154px);
-            -ms-transform: translateX(154px);
-            transform: translateX(154px);
-        }
-
-        /* Rounded sliders */
-        .slider.round {
-            border-radius: 34px;
-        }
-
-        .slider.round:before {
-            border-radius: 50%;
-        }
-
-        /* ... previous CSS ... */
-
-        .checkbox-wrapper {
-            display: flex; /* Use flexbox for alignment */
-            align-items: center; /* Align items vertically to the middle */
-            justify-content: flex-end;
-        }
-
-        .checkbox-wrapper label:first-child { /* Target the text label */
-            margin-right: 3px; /* Add some space between the label and switch */
-        }
-
-        .admin-form {
-            margin: 0;
-            text-align: right;
-        }
-
-        .username {
-            text-align: right;
+        /* убрать стрелки у input type="number" */
+        /* Chrome, Safari, Edge, Opera */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
             margin: 0;
         }
 
-        .username:hover {
-            color: darkred;
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
         }
 
-        .building-flex-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
+        #locationLoading {
+            display: none;
         }
-
-        .building-info {
-            width: calc(50% - 10px); /* 50% width for each card with 10px spacing */
-            margin-bottom: 20px;
-            background-color: #f9f9f9;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-
-        @media (max-width: 768px) {
-            .building-info {
-                width: calc(100% - 10px); /* On smaller screens, show one card per line */
-            }
-        }
-
     </style>
 </head>
 <body>
@@ -296,19 +217,21 @@
     <script>
         function validateForm() {
             var name = document.getElementById("name").value;
-            var location = document.getElementById("location").value;
+            var strLocation = document.getElementById("strLocation").value;
+            var lat = document.getElementById("lat").value;
+            var lon = document.getElementById("lon").value;
             var price = document.getElementById("price").value;
             var frontFiles = document.getElementById("frontFile").files;
             var entranceFiles = document.getElementById("entranceFile").files;
             var interiorFiles = document.getElementById("interiorFile").files;
 
-            // Check if name, location, and price are empty
+            // Check if name, strLocation, and price are empty
             if (name.trim() === "") {
                 alert("Пожалуйста, заполните поле 'Название'.");
                 return false; // Prevent form submission
             }
 
-            if (location.trim() === "") {
+            if (strLocation.trim() === "" || lat.trim() === "" || lon.trim() === "") {
                 alert("Пожалуйста, заполните поле 'Расположение'.");
                 return false; // Prevent form submission
             }
@@ -325,8 +248,8 @@
             }
 
             // Check if at least one file has been added
-            if (frontFiles.length === 0) {
-                alert("Пожалуйста, загрузите картинку фасада.");
+            if (frontFiles.length === 0 && entranceFiles.length === 0 && interiorFiles.length === 0) {
+                alert("Пожалуйста, добавьте хотя бы один файл.");
                 return false; // Prevent form submission
             }
 
@@ -336,11 +259,11 @@
     <script>
         function validateSearchForm() {
             var name = document.getElementById("searchName").value;
-            var location = document.getElementById("searchLocation").value;
+            var strLocation = document.getElementById("searchLocation").value;
             var price = document.getElementById("searchPrice").value;
 
             // Check if any search field is not empty
-            if (name.trim() === "" && location.trim() === "" && price.trim() === "") {
+            if (name.trim() === "" && strLocation.trim() === "" && price.trim() === "") {
                 alert("Пожалуйста, заполните хотя бы одно поле для поиска.");
                 return false; // Prevent form submission
             }
@@ -352,15 +275,15 @@
         <a href="/" style="text-decoration: none; color: inherit;">RENTAL PREMISES</a>
     </h2>
     <#if user.username??>
-        <form action="/logout" method="post" class="admin-form">
-            <h3 class="username">
+        <form action="/logout" method="post" class="login-form">
+            <h3 class="heading">
                 <a href="/user/${user.id}" style="text-decoration: none; color: inherit;">Имя
                     пользователя: ${user.username}</a>
             </h3>
             <input type="submit" value="Выйти из аккаунта" class="login-button"/>
         </form>
         <#if user.isAdmin()>
-            <form action="/admin" method="get" class="admin-form">
+            <form action="/admin" method="get" class="login-form">
                 <input type="submit" value="Панель администратора" class="admin-button"/>
             </form>
         </#if>
@@ -369,57 +292,47 @@
             <input type="submit" value="Вход" class="login-button"/>
         </form>
     </#if>
-    <!--фильтрация зданий-->
     <form action="/" method="get" class="search" onsubmit="return validateSearchForm()">
         <label for="searchName">Поиск по названию здания:</label>
         <input type="text" id="searchName" name="name"/><br>
-
         <label for="searchLocation">Поиск по локации здания:</label>
-        <input type="text" id="searchLocation" name="location"/><br>
-
+        <input type="text" id="searchLocation" name="strLocation"/><br>
         <label for="searchPrice">Поиск по цене здания:</label>
         <input type="number" id="searchPrice" name="price"/><br>
-
-        <div class="checkbox-wrapper">
-            <label for="approvedSwitch">Одобрено:</label>
-            <label class="switch">
-                <input type="checkbox" id="approvedSwitch" name="approved">
-                <span class="slider round"></span>
-            </label>
-        </div>
-
         <input type="submit" value="Поиск"/>
     </form>
-    <div class="building-flex-container">
-        <#list buildings as building>
-            <!--реализованно при помощи freeMarker, buildings передаётся через buildings(Model model)-->
-            <!--цикл for, проходимся по каждому зданию-->
-            <div class="building-info">
-                <#list building.images as img >
-                    <#if img.isPreviewImage()>
-                        <a href="/images/${img.id}" target="_blank">
-                            <img src="/images/${img.id}" height="250px">
-                        </a>
-                    </#if>
-                </#list>
-                <h4>Название: ${building.name}</h4>
-                <p>Расположение: ${building.location}</p>
-                <p>Цена: ${building.price}</p>
-                <p>Владелец: ${building.user.name}</p>
-                <p>Описание: ${building.description}</p>
-                <#if building.approved>
-                    <p>Статус: одобрено</p>
-                <#else>
-                    <p>Статус: неодобрено</p>
-                </#if>
-                <form action="/building/${building.id}" method="get" class="login-form">
-                    <input type="submit" value="Подробнее..." class="login-button"/>
-                </form>
-            </div>
-        <#else>
-            <h3 class="search-error">Ничего не найдено</h3>
-        </#list>
-    </div>
+    <#list buildings as building>
+        <!--реализованно при помощи freeMarker, buildings передаётся через buildings(Model model)-->
+        <!--цикл for, проходимся по каждому зданию-->
+        <div class="building-info">
+            <h4>Название: ${building.name}</h4>
+            <p>Расположение: ${building.strLocation}
+                <#if building.floor?trim != ''>, этаж ${building.floor}</#if>
+                <#if building.roomNo?trim != ''>, помещение ${building.roomNo}</#if>
+            </p><p>Тип помещения:
+            <#switch building.type>
+                <#case "BUILDING">
+                    Отдельное здание
+                    <#break>
+                <#case "MALL">
+                    ТЦ, ТРЦ, ТРК
+                    <#break>
+                <#case "FIRST_FLOOR">
+                    Первый этаж МКД
+                    <#break>
+                <#default>
+                    Не указано
+            </#switch></p>
+            <p>Цена: ${building.price}</p>
+            <p>Владелец: ${building.user.username}</p>
+            <p>Описание: ${building.description}</p>
+            <form action="/building/${building.id}" method="get" class="login-form">
+                <input type="submit" value="Подробнее..." class="login-button"/>
+            </form>
+        </div>
+    <#else>
+        <h3 class="search-error">Ничего не найдено</h3>
+    </#list>
     <#if user.username??>
         <h3 class="add">Внести новое помещение</h3>
         <!--Передаёт JSON методом POST, спринг получает и автоматически конверирует в Building-->
@@ -428,8 +341,107 @@
               onsubmit="return validateForm()">
             <label for="name">Название:</label>
             <input type="text" id="name" name="name"/><br><br>
-            <label for="location">Расположение:</label>
-            <input type="text" id="location" name="location"/><br><br>
+        
+            <label for="strLocation">Расположение:</label>
+            <input type="text" id="strLocation" name="strLocation" placeholder="Страна, Регион, Город или Нас.пункт, Улица, Номер дома"/>
+            <input type="button" id="detailedLocationBtn" class="getDetailedLocation" value="✓" onclick="getDetailedLocation()">
+            <br><br>
+            <label id="locationLoading" hidden>Загрузка...</label>
+            <br><br>
+<#--            <label for="useDetailedLocation">Уточнить адрес:</label>-->
+<#--            <input type="checkbox" id="useDetailedLocation" onchange="toggleInputFields()"/><br><br>-->
+<#--            <label for="detailedLocation">Адрес на карте:</label>-->
+            <table id="detailedLocationTable">
+                <tbody>
+                <tr>
+                    <td><label for="lat">Широта:</label>
+                        <input type="number" id="lat" name="lat" step="any" readonly/></td>
+                    <td><label for="lon">Долгота:</label>
+                        <input type="number" id="lon" name="lon" step="any" readonly/></td>
+                </tr>
+                <tr>
+                    <td><label for="country">Страна:</label>
+                        <input type="text" id="country" name="country" readonly/></td>
+                    <td><label for="state">Регион:</label>
+                        <input type="text" id="state" name="state" readonly/></td>
+                </tr>
+                <tr>
+                    <td><label for="county">Район:</label>
+                        <input type="text" id="county" name="county" readonly/></td>
+                    <td><label for="city">Город/Населённый пункт:</label>
+                        <input type="text" id="city" name="city" readonly/></td>
+                </tr>
+                <tr>
+                    <td><label for="road">Улица:</label>
+                        <input type="text" id="road" name="road" readonly/></td>
+                    <td><label for="buildingNo">Номер дома:</label>
+                        <input type="text" id="buildingNo" name="buildingNo" readonly/></td>
+                </tr>
+                </tbody>
+            </table><br><br>
+
+            <label for="floor">Этаж:</label>
+            <input type="text" id="floor" name="floor" value=""/><br><br>
+            <label for="roomNo">Номер помещения:</label>
+            <input type="text" id="roomNo" name="roomNo" value=""/><br><br>
+            <label for="type">Тип помещения:</label>
+            <select id="type" name="type">
+                <option value="NO_DATA">Не указано</option>
+                <option value="BUILDING">Отдельное здание</option>
+                <option value="MALL">ТЦ, ТРЦ, ТРК</option>
+                <option value="FIRST_FLOOR">Первый этаж МКД</option>
+            </select><br><br>
+
+            <script>
+                async function getDetailedLocation() {
+                    document.getElementById('locationLoading').style.display = 'inline-block';
+                    var strLocation = document.getElementById('strLocation').value;
+                    const response = await fetch("https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=" + strLocation);
+                    const jsonLocation = await response.json();
+                    if (jsonLocation.length < 1) {
+                        alert("Здание с таким адресом не найдено")
+                        return;
+                    }
+                    const location = jsonLocation[0];
+                    document.getElementById('lat').value = location["lat"];
+                    document.getElementById('lon').value = location["lon"];
+                    const address = location["address"];
+                    document.getElementById('country').value = address["country"] || "";
+                    document.getElementById('state').value = address["state"] || "";
+                    document.getElementById('county').value = address["county"] || "";
+                    document.getElementById('road').value = address["road"] || "";
+                    document.getElementById('buildingNo').value = address["house_number"] || "";
+
+                    // достаём нас. пункт из адреса потому что в OSM дебильная система для этого
+                    const properties = ["city", "town", "village", "hamlet", "allotments", "suburb"];
+                    let cityValue = "";
+
+                    for (let prop of properties) {
+                        if (address[prop] !== undefined) {
+                            cityValue = address[prop];
+                            break;
+                        }
+                    }
+
+                    document.getElementById('city').value = cityValue;
+                    document.getElementById('locationLoading').style.display = 'none';
+                }
+
+                function toggleInputFields() {
+                    var useDetailedLocation = document.getElementById('useDetailedLocation').checked;
+                    document.getElementById('strLocation').disabled = useDetailedLocation;
+                    document.getElementById('lat').disabled = !useDetailedLocation;
+                    document.getElementById('lon').disabled = !useDetailedLocation;
+                    document.getElementById('country').disabled = !useDetailedLocation;
+                    document.getElementById('state').disabled = !useDetailedLocation;
+                    document.getElementById('county').disabled = !useDetailedLocation;
+                    document.getElementById('city').disabled = !useDetailedLocation;
+                    document.getElementById('road').disabled = !useDetailedLocation;
+                    document.getElementById('buildingNo').disabled = !useDetailedLocation;
+                    
+                }
+            </script>
+        
             <label for="price">Цена:</label>
             <input type="number" id="price" name="price"/><br><br>
             <label for="description">Описание:</label>
@@ -465,7 +477,9 @@
         {
             id: ${building.id},
             name: "${building.name}",
-            strLocation: "${building.location}",
+            strLocation: "${building.strLocation}",
+            lat: ${building.lat?cn},
+            lon: ${building.lon?cn},
             price: "${building.price}",
             username: "${building.user.username}",
             description: "${building.description}"
@@ -477,11 +491,8 @@
         makeMarker(mapBuildings[i]);
     }
 
-    async function makeMarker(building) {
-        const response = await fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + building["strLocation"]);
-        const jsonLocation = await response.json();
-        const location = jsonLocation[0];
-        L.marker([location["lat"], location["lon"]]).addTo(map)
+    function makeMarker(building) {
+        L.marker([building.lat, building.lon]).addTo(map)
             .bindPopup(
                 '<h3>' + building["name"] + '</h3>' + building["strLocation"] + '<br><form action="/building/'
                 + building.id + '" method="get" class="login-form"><input type="submit" value="Подробнее..." class="login-button"/></form>'

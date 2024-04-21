@@ -48,8 +48,9 @@ public class BuildingService {
             entrance = toImageEntity(entranceFile);
             building.addImageToProduct(entrance);
         }
-        if (interiorFile.getSize() != 0) {
+        if (frontFile.getSize() != 0) {
             interior = toImageEntity(interiorFile);
+            interior.setPreviewImage(true);
             building.addImageToProduct(interior);
         }
         log.info("Saving building: name = {}, owner = {}", building.getName(), building.getUser().getUsername());
@@ -59,16 +60,8 @@ public class BuildingService {
     }
 
     public User getUserByPrincipal(Principal principal) {
-        log.info("BuildingService.getUserByPrincipal");
         if (principal == null) return new User();
-        log.info("BuildingService.getUserByPrincipal. principal is not null ");
-        User user = userRepository.findUserByUsername(principal.getName()).orElse(new User());
-        if (user.getUsername().equals(principal.getName())) {
-            log.info("user {} not found", principal.getName());
-        } else {
-            log.info("user {} was found", principal.getName());
-        }
-        return user;
+        return userRepository.findUserByUsername(principal.getName()).orElse(new User());
         // хз что возвращает principal.getName() - name or username?
     }
 
@@ -89,7 +82,7 @@ public class BuildingService {
         return buildingRepository.findById(id).orElse(null);
     }
 
-    public List<Building> listBuildings(String name, String location, Integer price, Boolean approved) {
+    public List<Building> listBuildings(String name, String location, Integer price) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Building> query = criteriaBuilder.createQuery(Building.class);
         Root<Building> root = query.from(Building.class);
@@ -103,17 +96,7 @@ public class BuildingService {
         if (price != null){
             predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("price"), price));
         }
-        if (approved != null) {
-            predicates.add(criteriaBuilder.equal(root.get("approved"), approved));
-        }
         query.select(root).where(predicates.toArray(new Predicate[0]));
         return entityManager.createQuery(query).getResultList();
     }
-    public void changeBuildingStatus(long buildingId, boolean approved) {
-        Building building = buildingRepository.findById(buildingId)
-                .orElseThrow(() -> new IllegalArgumentException("Building not found with id: " + buildingId));
-        building.setApproved(approved);
-        buildingRepository.save(building);
-    }
-
 }
