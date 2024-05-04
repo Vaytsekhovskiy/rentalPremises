@@ -458,50 +458,53 @@
     </form>
     <div class="building-flex-container">
         <#list buildings as building>
-            <!--реализованно при помощи freeMarker, buildings передаётся через buildings(Model model)-->
-            <!--цикл for, проходимся по каждому зданию-->
-            <div class="building-info">
-                <div class="image-container">
-                    <#list building.images as img>
-                        <#if img.isPreviewImage()>
-                            <a href="/images/${img.id}" target="_blank">
-                                <img src="/images/${img.id}" height="250px">
-                            </a>
-                        </#if>
-                    </#list>
+            <#if building.user.id == user.id || user.isAdmin()>
+                <!--реализованно при помощи freeMarker, buildings передаётся через buildings(Model model)-->
+                <!--цикл for, проходимся по каждому зданию-->
+                <div class="building-info">
+                    <div class="image-container">
+                        <#list building.images as img>
+                            <#if img.isPreviewImage()>
+                                <a href="/images/${img.id}" target="_blank">
+                                    <img src="/images/${img.id}" height="250px">
+                                </a>
+                            </#if>
+                        </#list>
+                    </div>
+                    <h4>Название: ${building.name}</h4>
+                    <p>Расположение: ${building.strLocation}
+                        <#if building.floor?trim != ''>, этаж ${building.floor}</#if>
+                        <#if building.roomNo?trim != ''>, помещение ${building.roomNo}</#if>
+                    </p>
+                    <p>Тип помещения:
+                        <#switch building.type>
+                            <#case "BUILDING">
+                                Отдельное здание
+                                <#break>
+                            <#case "MALL">
+                                ТЦ, ТРЦ, ТРК
+                                <#break>
+                            <#case "FIRST_FLOOR">
+                                Первый этаж МКД
+                                <#break>
+                            <#default>
+                                Не указано
+                        </#switch></p>
+                    <p>Цена: ${building.price}</p>
+                    <p>Владелец: ${building.user.name}</p>
+                    <p>Описание: ${building.description}</p>
+                    <#if building.approved>
+                        <p>Статус: одобрено</p>
+                    <#else>
+                        <p>Статус: неодобрено</p>
+                    </#if>
+                    <form action="/building/${building.id}" method="get" class="login-form">
+                        <input type="submit" value="Подробнее..." class="login-button"/>
+                    </form>
                 </div>
-                <h4>Название: ${building.name}</h4>
-                <p>Расположение: ${building.strLocation}
-                    <#if building.floor?trim != ''>, этаж ${building.floor}</#if>
-                    <#if building.roomNo?trim != ''>, помещение ${building.roomNo}</#if>
-                </p><p>Тип помещения:
-                    <#switch building.type>
-                        <#case "BUILDING">
-                            Отдельное здание
-                            <#break>
-                        <#case "MALL">
-                            ТЦ, ТРЦ, ТРК
-                            <#break>
-                        <#case "FIRST_FLOOR">
-                            Первый этаж МКД
-                            <#break>
-                        <#default>
-                            Не указано
-                    </#switch></p>
-                <p>Цена: ${building.price}</p>
-                <p>Владелец: ${building.user.name}</p>
-                <p>Описание: ${building.description}</p>
-                <#if building.approved>
-                    <p>Статус: одобрено</p>
-                <#else>
-                    <p>Статус: неодобрено</p>
-                </#if>
-                <form action="/building/${building.id}" method="get" class="login-form">
-                    <input type="submit" value="Подробнее..." class="login-button"/>
-                </form>
-            </div>
-        <#else>
-            <h3 class="search-error">Ничего не найдено</h3>
+            <#else>
+                <h3 class="search-error">Ничего не найдено</h3>
+            </#if>
         </#list>
     </div>
     <#if user.username??>
@@ -514,14 +517,16 @@
             <input type="text" id="name" name="name"/><br><br>
 
             <label for="strLocation">Расположение:</label>
-            <input type="text" id="strLocation" name="strLocation" placeholder="Страна, Регион, Город или Нас.пункт, Улица, Номер дома"/>
-            <input type="button" id="detailedLocationBtn" class="getDetailedLocation" value="✓" onclick="getDetailedLocation()">
+            <input type="text" id="strLocation" name="strLocation"
+                   placeholder="Страна, Регион, Город или Нас.пункт, Улица, Номер дома"/>
+            <input type="button" id="detailedLocationBtn" class="getDetailedLocation" value="✓"
+                   onclick="getDetailedLocation()">
             <br><br>
             <label id="locationLoading" hidden>Загрузка...</label>
             <br><br>
-<#--            <label for="useDetailedLocation">Уточнить адрес:</label>-->
-<#--            <input type="checkbox" id="useDetailedLocation" onchange="toggleInputFields()"/><br><br>-->
-<#--            <label for="detailedLocation">Адрес на карте:</label>-->
+            <#--            <label for="useDetailedLocation">Уточнить адрес:</label>-->
+            <#--            <input type="checkbox" id="useDetailedLocation" onchange="toggleInputFields()"/><br><br>-->
+            <#--            <label for="detailedLocation">Адрес на карте:</label>-->
             <table id="detailedLocationTable">
                 <tbody>
                 <tr>
@@ -549,7 +554,8 @@
                         <input type="text" id="buildingNo" name="buildingNo" readonly/></td>
                 </tr>
                 </tbody>
-            </table><br><br>
+            </table>
+            <br><br>
 
             <label for="floor">Этаж:</label>
             <input type="text" id="floor" name="floor" value=""/><br><br>
@@ -630,12 +636,13 @@
         </form>
     <#else>
         <h4 class="alt-login">
-            <a href="/login" style="text-decoration: none; color: inherit;">Войдите в аккаунт, чтобы добавить помещение</a>
+            <a href="/login" style="text-decoration: none; color: inherit;">Войдите в аккаунт, чтобы добавить
+                помещение</a>
         </h4>
     </#if>
     <script>
         // Функция, которая отображает или скрывает форму при нажатии на кнопку "Внести новое помещение"
-        document.getElementById('addRoomBtn').addEventListener('click', function() {
+        document.getElementById('addRoomBtn').addEventListener('click', function () {
             var addRoomForm = document.getElementById('addRoomForm');
             if (addRoomForm.style.display === 'none') {
                 addRoomForm.style.display = 'block'; // Показываем форму
@@ -659,6 +666,7 @@
     // список мапов с данными о зданиях
     var mapBuildings = [
         <#list buildings as building>
+        <#if building.user.id == user.id || user.isAdmin()>
         {
             id: ${building.id},
             name: "${building.name}",
@@ -669,6 +677,7 @@
             username: "${building.user.username}",
             description: "${building.description}"
         }<#sep>,
+        </#if>
         </#list>
     ];
 
