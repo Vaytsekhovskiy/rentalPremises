@@ -2,11 +2,9 @@ package ru.magniti.rentalPremises.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import ru.magniti.rentalPremises.models.enums.Role;
+import ru.magniti.rentalPremises.converters.CryptoAttributeConverter;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -22,8 +20,10 @@ public class User{ // имплементируя UserDetails мы показыв
     private Long inn;
     @Column(name = "username")
     private String username;
+    @Convert(converter = CryptoAttributeConverter.class)
     @Column(name = "numberPhone", unique = true)
     private String numberPhone;
+    @Convert(converter = CryptoAttributeConverter.class)
     @Column(name = "name")
     private String name;
     @Column(name = "active")

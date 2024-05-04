@@ -6,8 +6,7 @@ import ru.magniti.rentalPremises.models.User;
 
 import java.util.Optional;
 
-@Transactional  
+@Transactional
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findUserByUsername(String username);
 }
-
